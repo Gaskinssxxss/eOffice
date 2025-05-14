@@ -1,0 +1,109 @@
+*buat semua lalu lintas model surat (post,put,delete) di POST kedalam model ARSIPSURAT
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// router.put(
+//   "/surat/:id/signature-replace",
+//   requireLogin,
+//   upload.single("signature"),
+//   async (req, res) => {
+//     try {
+//       const { id } = req.params;
+//       const { originalPath } = req.body;
+
+//       if (!req.file) {
+//         return res.status(400).json({ message: "No signature file uploaded." });
+//       }
+
+//       const surat = await Surat.findById(id);
+//       if (!surat) {
+//         return res.status(404).json({ message: "Surat not found." });
+//       }
+
+//       const signaturePath = req.file.path;
+//       const updatedLampiran = surat.lampiran.map((p) =>
+//         p === originalPath ? signaturePath : p
+//       );
+
+//       const updated = await Surat.findByIdAndUpdate(
+//         id,
+//         {
+//           lampiran: updatedLampiran,
+//           status: "ditandatangani",
+//         },
+//         { new: true }
+//       );
+
+//       return res.status(200).json({ message: "success", data: updated });
+//     } catch (err) {
+//       console.error(err);
+//       return res.status(500).json({ message: "failed", error: err });
+//     }
+//   }
+// );
+
+// router.put(
+//   "/surat/:id/signature-replace",
+//   requireLogin,
+//   upload.single("signature"),
+//   async (req, res) => {
+//     try {
+//       const { id } = req.params;
+//       const { originalPath } = req.body;
+//       if (!req.file) {
+//         return res.status(400).json({ message: "No signature file uploaded." });
+//       }
+
+//       const signaturePath = req.file.path;
+//       const surat = await Surat.findById(id);
+//       if (!surat) {
+//         return res.status(404).json({ message: "Surat not found." });
+//       }
+//       surat.lampiran = surat.lampiran.map((p) =>
+//         p === originalPath ? signaturePath : p
+//       );
+
+//       surat.status = "ditandatangani";
+//       await surat.save();
+
+//       return res.status(200).json({ message: "success", data: surat });
+//     } catch (err) {
+//       console.error(err);
+//       return res.status(500).json({ message: "failed", error: err });
+//     }
+//   }
+// );
