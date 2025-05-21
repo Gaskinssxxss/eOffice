@@ -1,189 +1,255 @@
 <template>
   <div
-    class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
+    class="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center p-4"
+    @click.self="$emit('close')"
   >
-    <div class="w-auto h-[30rem] overflow-y-auto bg-white p-6">
-      <div>
-        <div class="flex justify-end space-x-4 pb-2">
-          <div @click="zoomIn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              fill="#000000"
-              viewBox="0 0 256 256"
-            >
-              <path
-                d="M152,112a8,8,0,0,1-8,8H120v24a8,8,0,0,1-16,0V120H80a8,8,0,0,1,0-16h24V80a8,8,0,0,1,16,0v24h24A8,8,0,0,1,152,112Zm77.66,117.66a8,8,0,0,1-11.32,0l-50.06-50.07a88.11,88.11,0,1,1,11.31-11.31l50.07,50.06A8,8,0,0,1,229.66,229.66ZM112,184a72,72,0,1,0-72-72A72.08,72.08,0,0,0,112,184Z"
-              ></path>
-            </svg>
-          </div>
-          <div @click="zoomOut">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              fill="#000000"
-              viewBox="0 0 256 256"
-            >
-              <path
-                d="M152,112a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h64A8,8,0,0,1,152,112Zm77.66,117.66a8,8,0,0,1-11.32,0l-50.06-50.07a88.11,88.11,0,1,1,11.31-11.31l50.07,50.06A8,8,0,0,1,229.66,229.66ZM112,184a72,72,0,1,0-72-72A72.08,72.08,0,0,0,112,184Z"
-              ></path>
-            </svg>
-          </div>
-        </div>
-        <div class="flex items-center space-x-2">
-          <div>
-            <canvas
-              ref="canvas"
-              :width="canvasWidth"
-              :height="canvasHeight"
-              class="mb-4 border border-black"
-            ></canvas>
-          </div>
-        </div>
-        <div>
-          <div class="py-2 3xl:py-6">
-            <div class="flex justify-end space-x-2 3xl:space-x-4">
-              <button
-                @click="activateSignatureMode"
-                class="px-4 py-2 bg-gray-800 text-white font-semibold rounded-sm hover:bg-gray-700 transition duration-200 text-xs 3xl:text-sm"
-              >
-                Tanda Tangan
-              </button>
+    <div
+      class="bg-white rounded-lg shadow-lg max-w-[90vw] max-h-[90vh] flex flex-col"
+      style="width: 700px; height: 90vh"
+    >
+      <div
+        v-if="pdfData"
+        class="relative flex-1 overflow-auto border border-gray-300 rounded-t-lg"
+      >
+        <pdf
+          :src="pdfData"
+          :page="currentPage"
+          @num-pages="onNumPages"
+          style="width: 100%; height: 100%; display: block"
+        />
 
-              <button
-                @click="finishSignatureMode"
-                v-if="isSignatureMode"
-                class="px-4 py-2 bg-gray-800 text-white font-semibold rounded-sm hover:bg-gray-700 transition duration-200 text-xs 3xl:text-sm"
-              >
-                Selesai
-              </button>
+        <img
+          v-if="signatureImage"
+          :src="signatureImage"
+          :style="{
+            position: 'absolute',
+            top: signaturePos.y + 'px',
+            left: signaturePos.x + 'px',
+            width: '150px',
+            height: '50px',
+            cursor: 'grab',
+            userSelect: 'none',
+            touchAction: 'none',
+          }"
+          @mousedown="startDrag"
+          @touchstart.prevent="startDrag"
+          alt="signature"
+        />
+      </div>
 
-              <button
-                @click="clearCanvas"
-                class="px-4 py-2 bg-red-600 text-white font-semibold rounded-sm hover:bg-red-500 transition duration-200 text-xs 3xl:text-sm"
-              >
-                Bersihkan
-              </button>
+      <div
+        class="flex items-center justify-between bg-gray-100 border-t border-gray-300 rounded-b-lg p-3"
+      >
+        <button
+          @click="prevPage"
+          :disabled="currentPage <= 1"
+          class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+        >
+          Sebelumnya
+        </button>
+        <span class="text-sm text-gray-700">
+          Halaman {{ currentPage }} dari {{ totalPages }}
+        </span>
+        <button
+          @click="nextPage"
+          :disabled="currentPage >= totalPages"
+          class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+        >
+          Selanjutnya
+        </button>
+      </div>
 
-              <button
-                @click="finishAndReturnSignedImage"
-                class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-sm hover:bg-blue-400 transition duration-200 text-xs 3xl:text-sm"
-              >
-                Selesai & Kembali
-              </button>
-            </div>
-          </div>
-        </div>
+      <div class="flex items-center space-x-3 p-3 border-t border-gray-300">
+        <input
+          type="file"
+          @change="onSignatureChange"
+          accept="image/png, image/jpeg"
+          class="border rounded px-2 py-1"
+        />
+
+        <button
+          @click="insertSignatureToPdf"
+          :disabled="!pdfDoc || !signatureImage"
+          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400"
+        >
+          Tambah Tanda Tangan
+        </button>
+
+        <button
+          @click="$emit('close')"
+          class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+        >
+          Tutup
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { fabric } from "fabric";
+import pdf from "pdfvuer";
+import { PDFDocument } from "pdf-lib";
 
 export default {
+  name: "TandaTangan",
+  components: { pdf },
+
   props: {
-    imageUrl: {
+    pdfUrl: {
+      type: String,
+      required: true,
+    },
+    originalFileName: {
       type: String,
       required: true,
     },
   },
+  emits: ["signed-pdf-ready"],
+
   data() {
     return {
-      canvas: null,
-      isSignatureMode: false,
-      signatureGroup: null,
-      zoomLevel: 1,
-      canvasWidth: 0,
-      canvasHeight: 0,
+      pdfDoc: null,
+      currentPage: 1,
+      totalPages: 0,
+      signatureImage: null,
+      signaturePos: { x: 50, y: 50 },
+      dragging: false,
+      dragOffset: { x: 0, y: 0 },
     };
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.canvas = new fabric.Canvas(this.$refs.canvas);
-      this.loadImage();
-    });
+
+  computed: {
+    pdfData() {
+      return this.pdfUrl;
+    },
   },
+
+  watch: {
+    pdfUrl: {
+      immediate: true,
+      async handler(newUrl) {
+        if (!newUrl) return;
+
+        const response = await fetch(newUrl);
+        const contentType = response.headers.get("content-type");
+
+        if (!contentType || !contentType.includes("application/pdf")) {
+          alert("File yang dimuat bukan PDF valid.");
+          return;
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        this.pdfDoc = await PDFDocument.load(arrayBuffer);
+        this.totalPages = this.pdfDoc.getPageCount();
+        this.currentPage = 1;
+      },
+    },
+  },
+
   methods: {
-    loadImage() {
-      fabric.Image.fromURL(
-        this.imageUrl,
-        (img) => {
-          const { width: imgW, height: imgH } = img;
-
-          this.canvas.setWidth(imgW);
-          this.canvas.setHeight(imgH);
-          this.canvasWidth = imgW;
-          this.canvasHeight = imgH;
-
-          this.canvas.add(img);
-          this.canvas.renderAll();
-        },
-        { crossOrigin: "anonymous" }
-      );
+    onNumPages(num) {
+      this.totalPages = num;
     },
-    activateSignatureMode() {
-      const pencilBrush = new fabric.PencilBrush(this.canvas);
-      pencilBrush.width = 1.5;
-      this.canvas.freeDrawingBrush = pencilBrush;
-      this.canvas.isDrawingMode = true;
-      this.isSignatureMode = true;
+
+    nextPage() {
+      if (this.currentPage < this.totalPages) this.currentPage++;
     },
-    finishSignatureMode() {
-      this.canvas.isDrawingMode = false;
-      const strokes = this.canvas.getObjects().filter((o) => o.type === "path");
-      if (!strokes.length) return;
 
-      const sel = new fabric.ActiveSelection(strokes, { canvas: this.canvas });
-      this.canvas.setActiveObject(sel);
-
-      const group = sel.toGroup();
-      this.signatureGroup = group;
-
-      this.canvas.discardActiveObject();
-      this.canvas.requestRenderAll();
+    prevPage() {
+      if (this.currentPage > 1) this.currentPage--;
     },
-    groupAndUnlock() {
-      const objects = this.canvas.getObjects();
-      if (objects.length > 1) {
-        const group = new fabric.Group(objects, {
-          left: 100,
-          top: 100,
-        });
 
-        this.canvas.add(group);
-        this.signatureGroup = group;
+    onSignatureChange(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (this.signatureImage) URL.revokeObjectURL(this.signatureImage);
+      this.signatureImage = URL.createObjectURL(file);
+      this.signaturePos = { x: 50, y: 50 };
+    },
 
-        this.canvas.discardActiveObject();
+    startDrag(event) {
+      event.preventDefault();
+      this.dragging = true;
+      let clientX, clientY;
+      if (event.type === "mousedown") {
+        clientX = event.clientX;
+        clientY = event.clientY;
+        window.addEventListener("mousemove", this.onDrag);
+        window.addEventListener("mouseup", this.stopDrag);
+      } else {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+        window.addEventListener("touchmove", this.onDrag);
+        window.addEventListener("touchend", this.stopDrag);
       }
+      const rect = event.target.getBoundingClientRect();
+      this.dragOffset.x = clientX - rect.left;
+      this.dragOffset.y = clientY - rect.top;
     },
 
-    clearCanvas() {
-      this.canvas.clear();
-      this.loadImage();
-      this.signatureGroup = null;
+    onDrag(event) {
+      if (!this.dragging) return;
+      let clientX, clientY;
+      if (event.type === "mousemove") {
+        clientX = event.clientX;
+        clientY = event.clientY;
+      } else {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+      }
+      const container = event.target.parentNode.getBoundingClientRect();
+      let newX = clientX - container.left - this.dragOffset.x;
+      let newY = clientY - container.top - this.dragOffset.y;
+
+      newX = Math.max(0, Math.min(newX, container.width - 150));
+      newY = Math.max(0, Math.min(newY, container.height - 50));
+      this.signaturePos = { x: newX, y: newY };
     },
 
-    zoomIn() {
-      this.zoomLevel += 0.1;
-      this.canvas.setZoom(this.zoomLevel);
+    stopDrag() {
+      this.dragging = false;
+      window.removeEventListener("mousemove", this.onDrag);
+      window.removeEventListener("mouseup", this.stopDrag);
+      window.removeEventListener("touchmove", this.onDrag);
+      window.removeEventListener("touchend", this.stopDrag);
     },
 
-    zoomOut() {
-      this.zoomLevel -= 0.1;
-      if (this.zoomLevel < 0.1) this.zoomLevel = 0.1;
-      this.canvas.setZoom(this.zoomLevel);
-    },
+    async insertSignatureToPdf() {
+      if (!this.pdfDoc || !this.signatureImage) {
+        alert("PDF atau tanda tangan belum siap.");
+        return;
+      }
+      try {
+        const pngBytes = await fetch(this.signatureImage).then((res) =>
+          res.arrayBuffer()
+        );
+        const pngImage = await this.pdfDoc.embedPng(pngBytes);
+        const page = this.pdfDoc.getPage(this.currentPage - 1);
+        const { height } = page.getSize();
+        const x = this.signaturePos.x;
+        const y = height - this.signaturePos.y - 50;
+        page.drawImage(pngImage, { x, y, width: 150, height: 50 });
 
-    finishAndReturnSignedImage() {
-      const dataUrl = this.canvas.toDataURL("image/png");
-      this.$emit("updateSignedImage", dataUrl);
-      this.$emit("closeModal");
-      this.$emit("openVerificationModal");
+        const pdfBytes = await this.pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: "application/pdf" });
+
+        const fileName = this.originalFileName;
+        const file = new File([blob], fileName, { type: "application/pdf" });
+
+        this.$emit("signed-pdf-ready", file);
+
+        alert("PDF dengan tanda tangan berhasil dibuat!");
+      } catch (error) {
+        alert("Gagal memasukkan tanda tangan: " + error.message);
+      }
     },
   },
 };
 </script>
+
+<style>
+img {
+  user-select: none;
+  touch-action: none;
+}
+</style>

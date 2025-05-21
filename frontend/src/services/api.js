@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === "development") {
 
 const api = axios.create({
   baseURL: baseUrl,
-  timeout: 1000,
+  timeout: 30000,
   headers: {
     "Content-Type": "application/json; charset=utf-8",
     "Access-Control-Allow-Credentials": true,

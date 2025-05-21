@@ -25,7 +25,7 @@ export default {
     return Api.put(`/users/${id}/status`, { status });
   },
 
-  deleteUsersByStatus(status) {
-    return Api.delete(`/users/status/${status}`);
+  deleteUser(id) {
+    return Api.delete(`/users/${id}`);
   },
 };

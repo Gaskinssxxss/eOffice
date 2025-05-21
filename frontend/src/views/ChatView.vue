@@ -16,9 +16,7 @@
           }"
           class="flex justify-between text-sm items-center cursor-pointer py-1 hover:bg-blue-300 px-2"
         >
-          <span class="text-gray-900"
-            >{{ user.username }} ({{ user.jabatan }})</span
-          >
+          <span class="text-gray-900">{{ user.username }}</span>
           <span v-if="user.unread" class="h-3 w-3 bg-black block"></span>
         </li>
       </ul>

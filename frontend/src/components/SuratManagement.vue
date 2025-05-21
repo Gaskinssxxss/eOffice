@@ -1,1480 +1,1615 @@
 <template>
-  <div class="py-10">
-    <div class="flex justify-between items-end -mt-2">
-      <div class="flex space-x-2 items-end">
-        <div class="flex space-x-2">
+  <div class="mt-6">
+    <div class="flex justify-between items-center">
+      <div class="flex space-x-2 items-center">
+        <div>
           <input
-            v-model="filters.q"
+            v-model="filters.noSurat"
             type="text"
-            placeholder="Nomor surat..."
-            class="w-[10rem] h-[2rem] border rounded-sm px-2 text-xs 3xl:text-sm placeholder-gray-600 text-gray-600"
+            placeholder="Cari No Surat"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
           />
+        </div>
 
+        <div>
+          <input
+            v-model="filters.surat_dari"
+            type="text"
+            placeholder="Cari Surat Dari"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+          />
+        </div>
+
+        <div>
           <select
-            v-model="filters.sender"
-            class="w-[10rem] h-[2rem] border rounded-sm px-2 text-xs 3xl:text-sm text-gray-600"
+            v-model="filters.sifatSurat"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
           >
-            <option value="">Pengirim</option>
-            <option v-for="u in distinctSenders" :key="u" :value="u">
-              {{ u }}
+            <option value="">Semua Sifat Surat</option>
+            <option value="Segera">Segera</option>
+            <option value="Penting">Penting</option>
+            <option value="Rahasia">Rahasia</option>
+            <option value="Biasa">Biasa</option>
+          </select>
+        </div>
+
+        <div>
+          <select
+            v-model="filters.diteruskanKepada"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+          >
+            <option value="">Semua Penerima</option>
+            <option value="Kepala Bagian Perencanaan dan Pelaporan">
+              Kepala Bagian Perencanaan dan Pelaporan
+            </option>
+            <option value="Kepala Bagian Protokol">
+              Kepala Bagian Protokol
+            </option>
+            <option value="Kepala Bagian Materi dan Komunikasi Pimpinan">
+              Kepala Bagian Materi dan Komunikasi Pimpinan
+            </option>
+            <option value="Kepala Sub Bagian Tata Usaha">
+              Kepala Sub Bagian Tata Usaha
             </option>
           </select>
+        </div>
 
+        <div>
           <select
-            v-model="filters.receiver"
-            class="w-[15rem] h-[2rem] border rounded-sm px-2 text-xs 3xl:text-sm text-gray-600"
+            v-model="filters.disposisi"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
           >
-            <option value="">Penerima</option>
-            <option v-for="u in distinctReceivers" :key="u" :value="u">
-              {{ u }}
-            </option>
+            <option value="">Semua Disposisi</option>
+            <option value="Proses Tindak Lanjut">Proses Tindak Lanjut</option>
+            <option value="Tanggapan dan Saran">Tanggapan dan Saran</option>
+            <option value="Jadwalkan">Jadwalkan</option>
+            <option value="Wakili/Dampingi">Wakili/Dampingi</option>
+            <option value="Koordinasikan">Koordinasikan</option>
+            <option value="File/Arsip">File/Arsip</option>
           </select>
         </div>
-        <div class="flex space-x-2">
-          <div>
-            <label class="block text-sm mb-1">Start :</label>
-            <input
-              v-model="filters.dateFrom"
-              type="date"
-              class="w-full h-[2rem] border rounded-sm px-2 text-xs 3xl:text-sm text-gray-600"
-            />
-          </div>
 
-          <div>
-            <label class="block text-sm mb-1">End:</label>
-            <input
-              v-model="filters.dateTo"
-              type="date"
-              class="w-full h-[2rem] border rounded-sm px-2 text-xs 3xl:text-sm text-gray-600"
-            />
-          </div>
+        <div>
+          <input
+            v-model="filters.tglSuratStart"
+            type="date"
+            placeholder="tanggal"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+          />
         </div>
       </div>
-      <div class="flex">
-        <div
-          class="flex items-center px-2 py-0.5 text-white bg-blue-500 hover:bg-blue-600 transition duration-300 rounded-sm"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="fill-white size-6"
-            viewBox="0 0 256 256"
-          >
-            <path
-              d="M216,72H130.67L102.93,51.2a16.12,16.12,0,0,0-9.6-3.2H40A16,16,0,0,0,24,64V200a16,16,0,0,0,16,16H216.89A15.13,15.13,0,0,0,232,200.89V88A16,16,0,0,0,216,72Zm0,128H40V64H93.33L123.2,86.4A8,8,0,0,0,128,88h88Zm-56-56a8,8,0,0,1-8,8H136v16a8,8,0,0,1-16,0V152H104a8,8,0,0,1,0-16h16V120a8,8,0,0,1,16,0v16h16A8,8,0,0,1,160,144Z"
-            ></path>
-          </svg>
-          <button @click="openModal" class="px-2 text-xs 3xl:text-sm">
-            Buat Surat
-          </button>
-        </div>
-      </div>
-    </div>
 
-    <div
-      v-if="isModalOpen"
-      class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center"
-    >
-      <div class="bg-white max-w-lg overflow-y-auto rounded-md px-6 py-4">
-        <div class="flex justify-between">
-          <h1>{{ isEditMode ? "Edit Surat" : "Buat Surat" }}</h1>
-          <button @click="closeModal">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              fill="#000000"
-              viewBox="0 0 256 256"
-            >
-              <path
-                d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208V208ZM165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32Z"
-              ></path>
-            </svg>
-          </button>
-        </div>
-        <form
-          @submit.prevent="isEditMode ? updateSurat() : createSurat()"
-          class="space-y-4 pt-4"
-        >
-          <div>
-            <input
-              v-model="surat.nomorSurat"
-              type="text"
-              placeholder="Nomor Surat"
-              required
-              class="w-full px-2 py-2 border border-gray-400 rounded-sm text-xs 3xl:text-sm"
-            />
-          </div>
-          <div>
-            <input
-              v-model="surat.perihal"
-              type="text"
-              placeholder="Perihal"
-              required
-              class="w-full px-2 py-2 border border-gray-400 rounded-sm text-xs 3xl:text-sm"
-            />
-          </div>
-          <div>
-            <h1
-              class="w-full px-2 py-2 border border-gray-400 rounded-sm text-xs 3xl:text-sm bg-gray-100 placeholder-black"
-            >
-              {{ loggedInUser }}({{ jabatan }})
-            </h1>
-          </div>
-          <div>
-            <select
-              v-model="surat.penerima"
-              required
-              class="w-full px-2 py-2 border border-gray-400 rounded-sm text-xs 3xl:text-sm"
-            >
-              <option value="" disabled selected>Penerima</option>
-              <option
-                v-for="user in users"
-                :key="user._id"
-                :value="JSON.stringify(user)"
-              >
-                {{ user.username }}({{ user.jabatan }})
-              </option>
-            </select>
-          </div>
-          <div>
-            <input
-              v-model="surat.isiTidakLanjut"
-              type="text"
-              placeholder="Deskripsi Tindak Lanjut"
-              required
-              class="w-full px-2 py-2 border border-gray-400 rounded-sm text-xs 3xl:text-sm"
-            />
-          </div>
-          <div>
-            <input
-              type="file"
-              @change="handleFileUpload"
-              multiple
-              accept=".jpg,.png"
-              class="w-full px-2 py-2 border border-gray-400 rounded-sm text-xs 3xl:text-sm"
-            />
-          </div>
-          <div class="mt-4 overflow-y-auto max-h-52">
-            <div class="grid grid-cols-4 gap-2">
-              <div
-                v-for="(image, index) in surat.lampiran"
-                :key="index"
-                class="relative"
-              >
-                <img
-                  :src="image.preview"
-                  alt="Lampiran"
-                  class="w-40 h-40 object-cover rounded-sm cursor-pointer"
-                  @click="openLightbox(index)"
-                />
-                <button
-                  @click="removeImage(index)"
-                  class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                  title="Remove"
-                >
-                  &times;
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="pb-2">
-            <button
-              type="submit"
-              class="w-full py-2 bg-blue-500 text-white hover:bg-blue-600 transition duration-300 rounded-sm text-xs 3xl:text-sm"
-            >
-              {{ isEditMode ? "Edit Surat" : "Buat Surat" }}
-            </button>
-          </div>
-        </form>
-      </div>
-      <div
-        v-if="isLightboxOpen"
-        class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50"
-      >
-        <div class="relative bg-white p-2">
-          <div @click="closeLightbox" class="flex justify-end">
-            <button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                fill="#000000"
-                viewBox="0 0 256 256"
-              >
-                <path
-                  d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208V208ZM165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32Z"
-                ></path>
-              </svg>
-            </button>
-          </div>
-          <img :src="currentImage.preview" class="max-w-full max-h-[80vh]" />
-        </div>
-      </div>
-    </div>
-
-    <div
-      v-if="isImageModalOpen"
-      class="fixed inset-0 bg-gray-800 bg-opacity-50 z-10 px-10"
-    >
-      <div class="flex justify-end pt-4">
-        <button @click="closeImageModal">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            class="fill-black"
-            viewBox="0 0 256 256"
-          >
-            <path
-              d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208V208ZM165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32Z"
-            ></path>
-          </svg>
-        </button>
-      </div>
-
-      <div
-        class="flex justify-center items-center h-screen space-x-4 -mt-10 3xl:-mt-0"
-      >
-        <button @click="showPrevImage" :disabled="currentIndex === 0">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            fill="#000000"
-            viewBox="0 0 256 256"
-          >
-            <path
-              d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"
-            ></path>
-          </svg>
-        </button>
-        <div class="w-auto rounded-md">
-          <div class="flex justify-between space-x-4">
-            <div class="flex space-x-4 overflow-x-auto">
-              <img
-                :src="getFullImgPath(lampiranPreview[currentIndex])"
-                alt="Lampiran Image"
-                class="w-[20rem] 3xl:w-[20rem] h-[30rem] 3xl:h-[30rem] object-cover"
-              />
-            </div>
-          </div>
+      <div>
+        <div class="flex">
           <div>
             <button
-              v-if="checkSign === loggedInUser"
-              @click="openTandaTanganModal(lampiranPreview[currentIndex])"
-              class="py-1 px-4 w-full bg-blue-500 text-white hover:bg-blue-600 transition duration-300 rounded-b-md"
+              @click="openModalCreate"
+              class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm transition"
             >
-              Tanda Tangani
+              Tambah Surat
             </button>
           </div>
-        </div>
-        <button
-          @click="showNextImage"
-          :disabled="currentIndex === lampiranPreview.length - 1"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            fill="#000000"
-            viewBox="0 0 256 256"
-          >
-            <path
-              d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"
-            ></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <div>
-      <div class="w-auto overflow-x-auto">
-        <div v-if="role !== 'admin'" class="mt-4">
-          <table class="bg-white border border-gray-300">
-            <thead>
-              <tr class="bg-gray-100">
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Tanggal
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Nomor Surat
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Perihal
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Pengirim
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Penerima
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Tindak Lanjut
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Status
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Lampiran
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Exect
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Ket
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="item in filteredSurats"
-                :key="item._id"
-                class="text-center"
-              >
-                <td
-                  class="border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  {{ item.tanggalTindakLanjut.split("T")[0] }}
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  {{ item.nomorSurat }}
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap w-[15rem] max-w-[15rem] overflow-x-auto"
-                >
-                  {{ item.perihal }}
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  {{ item.pengirim.username }}
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  {{ item.penerima.username }}
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  <button @click="openTindakLanjut(item)" class="group">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="fill-gray-500 hover:fill-black size-6"
-                      viewBox="0 0 256 256"
-                    >
-                      <path
-                        d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM184,96a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,96Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,128Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,160Z"
-                      ></path>
-                    </svg>
-                    <span
-                      class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-                    >
-                      Keterangan
-                    </span>
-                  </button>
-                  <div
-                    v-if="isTindakLanjut"
-                    class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
-                  >
-                    <div
-                      class="bg-white p-6 max-w-lg h-auto flex flex-col justify-center items-center space-y-4"
-                    >
-                      <div>
-                        <h1>{{ item.isiTidakLanjut }}</h1>
-                      </div>
-                      <div>
-                        <button
-                          @click="closeTindakLanjut"
-                          class="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition duration-200"
-                        >
-                          Tutup
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  {{ item.status }}
-                </td>
-
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  <div class="flex justify-center">
-                    <div v-if="item.penerima.username === loggedInUser">
-                      <button
-                        v-if="
-                          item.penerima.username === loggedInUser &&
-                          item.status === 'dikirim'
-                        "
-                        @click="openImageModal(item)"
-                        class="px-2 py-1 relative group"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="fill-gray-500 hover:fill-black size-6"
-                          viewBox="0 0 256 256"
-                        >
-                          <path
-                            d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"
-                          ></path>
-                        </svg>
-                        <span
-                          class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-                        >
-                          Lampiran
-                        </span>
-                      </button>
-                      <button
-                        v-if="
-                          item.penerima.username === loggedInUser &&
-                          item.status !== 'dikirim'
-                        "
-                        @click="openImageModal(item)"
-                        class="px-2 py-1 relative group"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="fill-gray-500 hover:fill-black size-6"
-                          viewBox="0 0 256 256"
-                        >
-                          <path
-                            d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"
-                          ></path>
-                        </svg>
-                        <span
-                          class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-                        >
-                          Lampiran
-                        </span>
-                      </button>
-                    </div>
-
-                    <div v-else-if="item.pengirim.username === loggedInUser">
-                      <button
-                        v-if="item.pengirim.username"
-                        @click="openImageModalPengirim(item)"
-                        class="px-2 py-1"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="fill-gray-500 hover:fill-black size-6"
-                          viewBox="0 0 256 256"
-                        >
-                          <path
-                            d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"
-                          ></path>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </td>
-
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  <div v-if="item.penerima.username === loggedInUser">
-                    <div v-if="item.status === 'dikirim'">
-                      <button
-                        @click="unlockSurat(item._id)"
-                        class="px-4 py-2 bg-green-500 text-white hover:bg-green-600 transition duration-300"
-                      >
-                        Unlock & Terima Surat
-                      </button>
-                    </div>
-                    <div v-else class="space-x-4">
-                      <button
-                        @click="openRevisiModal(item)"
-                        class="relative group fill-gray-400"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="size-6"
-                          viewBox="0 0 256 256"
-                        >
-                          <path
-                            d="M227.32,73.37,182.63,28.69a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H216a8,8,0,0,0,0-16H115.32l112-112A16,16,0,0,0,227.32,73.37ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.69,147.32,64l24-24L216,84.69Z"
-                          ></path>
-                        </svg>
-                        <span
-                          class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-no-wrap"
-                        >
-                          Revisi
-                        </span>
-                      </button>
-
-                      <button class="relative group">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          class="size-6 stroke-red-500"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"
-                          />
-                        </svg>
-
-                        <span
-                          class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-                        >
-                          tolak
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                  <div
-                    v-else-if="item.pengirim.username === loggedInUser"
-                    class="space-x-4"
-                  >
-                    <button
-                      v-if="item.status === 'revisi'"
-                      @click="RevSurat(item._id)"
-                      class="px-4 py-2 bg-yellow-500 text-white hover:bg-yellow-600 transition duration-300"
-                    >
-                      Tandai direvisi
-                    </button>
-                    <button
-                      @click="editSurat(item)"
-                      class="py-2 transition duration-300"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        class="size-6 stroke-blue-500"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      @click="deleteSurat(item._id)"
-                      class="py-2 transition duration-300"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="fill-red-500 size-6"
-                        viewBox="0 0 256 256"
-                      >
-                        <path
-                          d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"
-                        ></path>
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-                <td v-if="item.keterangan !== ''" class="px-4 py-2 border">
-                  <button @click="openDescKet(item)" class="relative group">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="fill-gray-600 hover:fill-black size-6"
-                      viewBox="0 0 256 256"
-                    >
-                      <path
-                        d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM184,96a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,96Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,128Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,160Z"
-                      ></path>
-                    </svg>
-                    <span
-                      class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-                    >
-                      Keterangan
-                    </span>
-                  </button>
-                  <div
-                    v-if="revKet"
-                    class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
-                  >
-                    <div
-                      class="bg-white p-6 max-w-lg h-auto flex flex-col justify-center items-center space-y-4"
-                    >
-                      <div>
-                        <h1>{{ item.keterangan }}</h1>
-                      </div>
-                      <div>
-                        <button
-                          @click="closeRevKet"
-                          class="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition duration-200"
-                        >
-                          Tutup
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td v-else class="px-4 py-2 border">-</td>
-              </tr>
-              <tr v-if="filteredSurats.length === 0">
-                <td
-                  colspan="9"
-                  class="py-4 text-center text-xs 3xl:text-sm text-gray-500 w-full"
-                >
-                  Tidak ada data surat.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div v-else class="mt-4">
-          <table class="w-auto bg-white border border-gray-300">
-            <thead>
-              <tr class="bg-gray-100">
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Tanggal
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Nomor Surat
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Perihal
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Pengirim
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Penerima
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Tindak Lanjut
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Status
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Lampiran
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Exect
-                </th>
-                <th
-                  class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-                >
-                  Ket
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="item in filteredAdminSurats"
-                :key="item._id"
-                class="text-center"
-              >
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap whitespace-nowrap"
-                >
-                  {{ item.tanggalTindakLanjut.split("T")[0] }}
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-black capitalize whitespace-nowrap underline"
-                >
-                  {{ item.nomorSurat }}
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap w-[15rem] max-w-[15rem] overflow-x-auto"
-                >
-                  {{ item.perihal }}
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  {{ item.pengirim.username }} ({{ item.pengirim.jabatan }})
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  {{ item.penerima.username }} ({{ item.penerima.jabatan }})
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize"
-                >
-                  <button @click="openTindakLanjut(item)" class="group">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="fill-gray-500 hover:fill-black size-6"
-                      viewBox="0 0 256 256"
-                    >
-                      <path
-                        d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM184,96a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,96Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,128Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,160Z"
-                      ></path>
-                    </svg>
-                    <span
-                      class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-                    >
-                      Keterangan
-                    </span>
-                  </button>
-                  <div
-                    v-if="isTindakLanjut"
-                    class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
-                  >
-                    <div
-                      class="bg-white p-6 max-w-lg h-auto flex flex-col justify-center items-center space-y-4"
-                    >
-                      <div>
-                        <h1>{{ item.isiTidakLanjut }}</h1>
-                      </div>
-                      <div>
-                        <button
-                          @click="closeTindakLanjut"
-                          class="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition duration-200"
-                        >
-                          Tutup
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  {{ item.status }}
-                </td>
-
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-                >
-                  <div class="flex justify-center">
-                    <div>
-                      <button
-                        @click="openImageModal(item)"
-                        class="relative group"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="fill-gray-500 hover:fill-black size-6"
-                          viewBox="0 0 256 256"
-                        >
-                          <path
-                            d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"
-                          ></path>
-                        </svg>
-                        <span
-                          class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-                        >
-                          Lampiran
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                </td>
-
-                <td
-                  class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap w-full"
-                >
-                  <div class="space-x-4 py-2 flex">
-                    <button @click="editSurat(item)" class="relative group">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        class="size-6 stroke-blue-500"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                        />
-                      </svg>
-                      <span
-                        class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-                      >
-                        Edit
-                      </span>
-                    </button>
-                    <button
-                      @click="deleteSurat(item._id)"
-                      class="relative group"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="fill-red-500 size-6"
-                        viewBox="0 0 256 256"
-                      >
-                        <path
-                          d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"
-                        ></path>
-                      </svg>
-                      <span
-                        class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-                      >
-                        Hapus
-                      </span>
-                    </button>
-                  </div>
-                </td>
-                <td v-if="item.keterangan !== ''" class="px-4 py-2 border">
-                  {{ item.keterangan }}
-                </td>
-                <td v-else class="px-4 py-2 border">-</td>
-              </tr>
-              <tr v-if="filteredAdminSurats.length === 0">
-                <td
-                  colspan="9"
-                  class="py-4 text-center text-xs 3xl:text-sm text-gray-500 w-full"
-                >
-                  Tidak ada data surat.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div
-      v-if="isVerificationModalOpen"
-      class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
-    >
-      <div class="bg-white p-6 max-w-sm h-auto space-y-4">
-        <h3 class="text-xs 3xl:text-sm font-medium">
-          Apakah Anda yakin ingin memperbarui surat dengan lampiran tanda
-          tangan?
-        </h3>
-        <div class="flex justify-end space-x-4">
-          <button
-            @click="updateSuratWithNewLampiran"
-            class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-200 text-xs 3xl:text-sm"
-          >
-            Perbarui
-          </button>
-          <button
-            @click="closeVerificationModal"
-            class="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition duration-200 text-xs 3xl:text-sm"
-          >
-            Tutup
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <TandaTangan
-      class=""
-      :imageUrl="imageUrlForTandaTangan"
-      v-if="isTandaTanganModalOpen"
-      @closeModal="closeTandaTanganModal"
-      @updateSignedImage="handleSignedImageUpdate"
-      @openVerificationModal="openVerificationModal"
-    />
-
-    <div
-      v-if="isRevisiModalOpen"
-      class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
-    >
-      <div
-        class="bg-white p-6 w-[40rem] h-[20rem] flex flex-col justify-center items-center space-y-4"
-      >
-        <h3 class="text-xl font-medium">Masukkan Deskripsi Revisi Surat</h3>
-        <textarea
-          v-model="keteranganRevisi"
-          rows="4"
-          placeholder="Masukkan deskripsi revisi..."
-          class="w-full p-3 border border-gray-400"
-        ></textarea>
-        <div class="space-x-4">
-          <button
-            @click="updateSuratStatusToRevisi"
-            class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-200"
-          >
-            Ya, Perbarui Surat
-          </button>
-          <button
-            @click="closeRevisiModal"
-            class="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition duration-200"
-          >
-            Tidak, Batalkan
-          </button>
         </div>
       </div>
     </div>
   </div>
+
+  <div class="w-full py-6">
+    <div class="border shadow">
+      <table class="w-full divide-y divide-gray-200">
+        <thead class="bg-gray-100 uppercase">
+          <tr>
+            <th
+              class="px-6 py-2 text-center text-xs font-semibold text-gray-700 border border-gray-200"
+            >
+              No Surat
+            </th>
+            <th
+              class="px-6 py-2 text-center text-xs font-semibold text-gray-700 border border-gray-200"
+            >
+              Lembar Disposisi
+            </th>
+            <th
+              class="px-6 py-2 text-center text-xs font-semibold text-gray-700 border border-gray-200"
+            >
+              Tanggal Surat
+            </th>
+            <th
+              class="px-6 py-2 text-center text-xs font-semibold text-gray-700 border border-gray-200"
+            >
+              Lampiran
+            </th>
+            <th
+              class="px-6 py-2 text-center text-xs font-semibold text-gray-700 border border-gray-200"
+            >
+              Status Lampiran
+            </th>
+            <th
+              class="px-6 py-2 text-center text-xs font-semibold text-gray-700 border border-gray-200"
+            >
+              Status Surat
+            </th>
+            <th
+              class="px-6 py-2 text-center text-xs font-semibold text-gray-700"
+            >
+              Aksi
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200 w-full">
+          <tr
+            v-for="surat in filteredSuratList"
+            :key="surat._id"
+            class="hover:bg-gray-50 relative"
+            style="position: relative"
+          >
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+              {{ surat.noSurat }}
+            </td>
+            <td class="px-4 py-4 text-sm border border-gray-200 text-center">
+              <button
+                @click="openLembarDisposisiModal(surat)"
+                class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+              >
+                Lihat
+              </button>
+            </td>
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+              {{ formatDate(surat.tglSurat) }}
+            </td>
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+              <span v-if="surat.lampiran && surat.lampiran.length">
+                <div
+                  v-for="(file, index) in surat.lampiran"
+                  :key="file"
+                  class="flex space-x-2"
+                >
+                  <div>
+                    <a
+                      :href="getLampiranUrl(file)"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-blue-600 hover:underline"
+                    >
+                      {{ file }}
+                    </a>
+                  </div>
+                  <div
+                    v-if="
+                      surat.diteruskanKepada &&
+                      surat.diteruskanKepada.includes(loggedUser) &&
+                      surat.statusLampiran !== 'ditandatangani'
+                    "
+                  >
+                    <button
+                      @click="openTandaTanganModal(surat)"
+                      class="ml-2 text-sm text-green-600 hover:underline"
+                    >
+                      Tanda Tangan
+                    </button>
+                  </div>
+                  <span v-if="index < surat.lampiran.length - 1">, </span>
+                </div>
+              </span>
+              <span v-else>-</span>
+            </td>
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+              {{ surat.statusLampiran || "-" }}
+            </td>
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+              {{ surat.statusSurat || "-" }}
+            </td>
+            <td
+              class="px-2 py-4 text-sm border border-gray-200 text-center space-x-2"
+            >
+              <button @click="openModalEdit(surat)" class="relative group">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                  />
+                </svg>
+              </button>
+              <button
+                @click="onDeleteSurat(surat._id)"
+                :disabled="loading"
+                class="relative group"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="#000000"
+                  class="size-6"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                v-if="adminRole && surat.parafLembarDisposisi !== null"
+                @click="onArsipkanSurat(surat)"
+                :disabled="loading"
+                class="relative group"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="size-6"
+                  fill="#000000"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    d="M224,48H32A16,16,0,0,0,16,64V88a16,16,0,0,0,16,16v88a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V104a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48ZM208,192H48V104H208ZM224,88H32V64H224V88ZM96,136a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,136Z"
+                  ></path>
+                </svg>
+              </button>
+            </td>
+
+            <td
+              v-if="
+                surat.diteruskanKepada &&
+                surat.diteruskanKepada.includes(loggedUser) &&
+                surat.statusSurat !== 'diterima'
+              "
+              class="absolute inset-0 bg-gray-200 bg-opacity-80 flex items-center justify-center z-10"
+              colspan="100"
+            >
+              <button
+                @click="unlockSurat(surat)"
+                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              >
+                Terima Surat
+              </button>
+            </td>
+          </tr>
+
+          <tr v-if="suratList.length === 0 && !loadingSurat">
+            <td colspan="7" class="text-center py-6 text-gray-600">
+              Belum ada surat yang terdaftar.
+            </td>
+          </tr>
+
+          <tr v-if="loadingSurat">
+            <td colspan="7" class="text-center py-6">Memuat data surat...</td>
+          </tr>
+        </tbody>
+
+        <!-- <tbody class="bg-white divide-y divide-gray-200">
+          <tr
+            v-for="surat in filteredSuratList"
+            :key="surat._id"
+            class="hover:bg-gray-50"
+          >
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+              {{ surat.noSurat }}
+            </td>
+            <td class="px-4 py-4 text-sm border border-gray-200 text-center">
+              <button
+                @click="openLembarDisposisiModal(surat)"
+                class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+              >
+                Lihat
+              </button>
+            </td>
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+              {{ formatDate(surat.tglSurat) }}
+            </td>
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+              <span v-if="surat.lampiran && surat.lampiran.length">
+                <div
+                  v-for="file in surat.lampiran"
+                  :key="file"
+                  class="flex space-x-2"
+                >
+                  <div>
+                    <a
+                      :href="getLampiranUrl(file)"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-blue-600 hover:underline"
+                    >
+                      {{ file }}
+                    </a>
+                  </div>
+                  <div
+                    v-if="
+                      surat.diteruskanKepada &&
+                      surat.diteruskanKepada.includes(loggedUser) &&
+                      surat.statusLampiran !== 'ditandatangani'
+                    "
+                  >
+                    <button
+                      v-if="surat.lampiran && surat.lampiran.length"
+                      @click="openTandaTanganModal(surat)"
+                      class="ml-2 text-sm text-green-600 hover:underline"
+                    >
+                      Tanda Tangan
+                    </button>
+                  </div>
+
+                  <span v-if="index < surat.lampiran.length - 1">, </span>
+                </div>
+              </span>
+              <span v-else>-</span>
+            </td>
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+              {{ surat.statusSurat || "-" }}
+            </td>
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+              {{ surat.statusLampiran || "-" }}
+            </td>
+            <td
+              class="px-2 py-4 text-sm border border-gray-200 text-center space-x-2"
+            >
+              <button @click="openModalEdit(surat)" class="relative group">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                  />
+                </svg>
+                <span
+                  class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
+                >
+                  Edit Surat
+                </span>
+              </button>
+              <button
+                @click="onDeleteSurat(surat._id)"
+                :disabled="loading"
+                class="relative group"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  fill="#000000"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"
+                  ></path>
+                </svg>
+                <span
+                  class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
+                >
+                  Hapus Surat
+                </span>
+              </button>
+              <button
+                v-if="adminRole && surat.parafLembarDisposisi !== null"
+                @click="onArsipkanSurat(surat)"
+                :disabled="loading"
+                class="relative group"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  fill="#000000"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    d="M224,48H32A16,16,0,0,0,16,64V88a16,16,0,0,0,16,16v88a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V104a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48ZM208,192H48V104H208ZM224,88H32V64H224V88ZM96,136a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,136Z"
+                  ></path>
+                </svg>
+                <span
+                  class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
+                >
+                  Arsipkan Surat
+                </span>
+              </button>
+            </td>
+          </tr>
+          <tr v-if="suratList.length === 0 && !loadingSurat">
+            <td colspan="5" class="text-center py-6 text-gray-600">
+              Belum ada surat yang terdaftar.
+            </td>
+          </tr>
+          <tr v-if="loadingSurat">
+            <td colspan="5" class="text-center py-6">Memuat data surat...</td>
+          </tr>
+        </tbody> -->
+      </table>
+    </div>
+
+    <transition name="fade">
+      <div
+        v-if="modalVisible"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4"
+      >
+        <div
+          class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-lg text-sm font-sans"
+          @click.self="closeModal"
+        >
+          <div class="flex justify-center space-x-2 border-b">
+            <div>
+              <img src="../assets/client/Gambar25.png" alt="" />
+            </div>
+            <div class="text-center font-bold">
+              <h2 class="text-base uppercase tracking-wide">
+                PEMERINTAH PROVINSI NUSA TENGGARA BARAT
+              </h2>
+              <h1 class="text-2xl">SEKRETARIAT DAERAH</h1>
+              <h1 class="text-sm font-normal">
+                Jln Pejanggik Nomor 12 Telepon 0370 - 622373 Kode Pos 83121<br />
+                Website: biroapdim.ntbprov.go.id | Email:
+                biroapdim@ntbprov.go.id
+              </h1>
+            </div>
+          </div>
+          <h2
+            class="text-lg font-bold text-center mb-6 uppercase tracking-wide border-b pb-3"
+          >
+            {{ isEditing ? "Lembar Disposisi" : "Lembar Disposisi" }}
+          </h2>
+
+          <form @submit.prevent="onSubmit" class="space-y-6">
+            <div
+              class="grid grid-cols-2 gap-8 border border-gray-300 rounded p-4"
+            >
+              <div class="space-y-3">
+                <div>
+                  <label class="block font-semibold mb-1"
+                    >Surat Dari <span class="text-red-600">*</span></label
+                  >
+                  <input
+                    v-model="form.surat_dari"
+                    type="text"
+                    required
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+                  />
+                </div>
+
+                <div>
+                  <label class="block font-semibold mb-1"
+                    >No. Surat <span class="text-red-600">*</span></label
+                  >
+                  <input
+                    v-model="form.noSurat"
+                    type="text"
+                    required
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+                  />
+                </div>
+
+                <div>
+                  <label class="block font-semibold mb-1"
+                    >Tgl. Surat <span class="text-red-600">*</span></label
+                  >
+                  <input
+                    v-model="form.tglSurat"
+                    type="date"
+                    required
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+                  />
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div>
+                  <label class="block font-semibold mb-1"
+                    >Diterima Tgl <span class="text-red-600">*</span></label
+                  >
+                  <input
+                    v-model="form.diterimaTgl"
+                    type="date"
+                    required
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+                  />
+                </div>
+
+                <div>
+                  <label class="block font-semibold mb-1"
+                    >No. Agenda <span class="text-red-600">*</span></label
+                  >
+                  <input
+                    v-model="form.noAgenda"
+                    type="text"
+                    required
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+                  />
+                </div>
+
+                <div>
+                  <label class="block font-semibold mb-1"
+                    >Sifat Surat <span class="text-red-600">*</span></label
+                  >
+                  <div class="grid grid-cols-2 gap-x-4">
+                    <label class="inline-flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        name="sifatSurat"
+                        value="Segera"
+                        v-model="form.sifatSurat"
+                        required
+                        class="form-radio text-blue-600"
+                      />
+                      <span>Segera</span>
+                    </label>
+                    <label class="inline-flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        name="sifatSurat"
+                        value="Penting"
+                        v-model="form.sifatSurat"
+                        class="form-radio text-blue-600"
+                      />
+                      <span>Penting</span>
+                    </label>
+                    <label class="inline-flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        name="sifatSurat"
+                        value="Rahasia"
+                        v-model="form.sifatSurat"
+                        class="form-radio text-blue-600"
+                      />
+                      <span>Rahasia</span>
+                    </label>
+                    <label class="inline-flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        name="sifatSurat"
+                        value="Biasa"
+                        v-model="form.sifatSurat"
+                        class="form-radio text-blue-600"
+                      />
+                      <span>Biasa</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="border border-gray-300 rounded p-4 flex space-x-2">
+              <label class="block font-semibold mb-2"
+                >Perihal Surat / Catatan
+                <span class="text-red-600">*</span></label
+              >
+              <textarea
+                v-model="form.catatan"
+                rows="4"
+                required
+                class="w-full border border-gray-300 rounded-md px-3 py-2 resize-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+              ></textarea>
+            </div>
+
+            <div class="border border-gray-300 rounded p-4 flex space-x-2">
+              <label class="block font-semibold mb-2"
+                >Diteruskan Kepada <span class="text-red-600">*</span></label
+              >
+              <div>
+                <div>
+                  <label>
+                    <input
+                      type="radio"
+                      value="Kepala Bagian Perencanaan dan Pelaporan"
+                      v-model="form.diteruskanKepada"
+                      class="form-radio text-green-600"
+                    />
+                    <span class="pl-2"
+                      >Kepala Bagian Perencanaan dan Pelaporan</span
+                    >
+                  </label>
+                </div>
+                <div>
+                  <label>
+                    <input
+                      type="radio"
+                      value="Kepala Bagian Protokol"
+                      v-model="form.diteruskanKepada"
+                      class="form-radio text-green-600"
+                    />
+                    <span class="pl-2">Kepala Bagian Protokol</span>
+                  </label>
+                </div>
+                <div>
+                  <label>
+                    <input
+                      type="radio"
+                      value="Kepala Bagian Materi dan Komunikasi Pimpinan"
+                      v-model="form.diteruskanKepada"
+                      class="form-radio text-green-600"
+                    />
+                    <span class="pl-2"
+                      >Kepala Bagian Materi dan Komunikasi Pimpinan</span
+                    >
+                  </label>
+                </div>
+                <div>
+                  <label>
+                    <input
+                      type="radio"
+                      value="Kepala Sub Bagian Tata Usaha"
+                      v-model="form.diteruskanKepada"
+                      class="form-radio text-green-600"
+                    />
+                    <span class="pl-2">Kepala Sub Bagian Tata Usaha</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="border border-gray-300 rounded p-4">
+              <label class="block font-semibold mb-2"
+                >Disposisi <span class="text-red-600">*</span></label
+              >
+              <div class="grid grid-cols-2 gap-x-8">
+                <label class="inline-flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    value="Proses Tindak Lanjut"
+                    v-model="form.disposisi"
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Proses Tindak Lanjut</span>
+                </label>
+                <label class="inline-flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    value="Tanggapan dan Saran"
+                    v-model="form.disposisi"
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Tanggapan dan Saran</span>
+                </label>
+                <label class="inline-flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    value="Jadwalkan"
+                    v-model="form.disposisi"
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Jadwalkan</span>
+                </label>
+                <label class="inline-flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    value="Wakili/Dampingi"
+                    v-model="form.disposisi"
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Wakili/Dampingi</span>
+                </label>
+                <label class="inline-flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    value="Koordinasikan"
+                    v-model="form.disposisi"
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Koordinasikan</span>
+                </label>
+                <label class="inline-flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    value="File/Arsip"
+                    v-model="form.disposisi"
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>File/Arsip</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-semibold mb-1"
+                >Lampiran (File multiple)</label
+              >
+              <input
+                type="file"
+                accept="image/*,.pdf,.doc,.docx"
+                multiple
+                @change="onLampiranFilesChange"
+                class="w-full"
+              />
+              <p v-if="form.lampiran.length" class="text-sm mt-1 text-gray-600">
+                <a
+                  :href="getLampiranUrl(form.lampiran)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:underline"
+                >
+                  {{ form.lampiran }}
+                </a>
+              </p>
+            </div>
+
+            <div v-if="isEditing">
+              <label class="block font-semibold mb-1"
+                >Paraf Lembar Disposisi</label
+              >
+              <input
+                type="file"
+                accept="image/*,.pdf"
+                @change="onParafFileChange"
+                class="w-full"
+              />
+              <p
+                v-if="form.parafLembarDisposisi"
+                class="text-sm mt-1 text-gray-600"
+              >
+                <a
+                  :href="getLampiranUrl(form.parafLembarDisposisi)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:underline"
+                >
+                  {{ form.parafLembarDisposisi }}
+                </a>
+              </p>
+            </div>
+
+            <div v-if="isEditing">
+              <label class="block font-semibold mb-1"
+                >Tanggal Paraf Lembar Disposisi
+                <span class="text-red-600">*</span></label
+              >
+              <input
+                v-model="form.tglParafLembarDisposisi"
+                type="date"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+              />
+            </div>
+
+            <div class="flex justify-end space-x-4 mt-6">
+              <button
+                type="button"
+                @click="closeModal"
+                class="px-4 py-2 rounded border border-gray-400 hover:bg-gray-100 transition"
+                :disabled="loading"
+              >
+                Batal
+              </button>
+              <button
+                type="submit"
+                class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-50"
+                :disabled="loading"
+              >
+                {{ isEditing ? "Update Surat" : "Buat Surat" }}
+              </button>
+            </div>
+          </form>
+
+          <button
+            @click="closeModal"
+            aria-label="Close modal"
+            class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    </transition>
+
+    <transition name="fade">
+      <div
+        v-if="lembarDisposisiModalVisible"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4"
+      >
+        <div
+          class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-lg text-sm font-sans"
+          @click.self="closeLembarDisposisiModal"
+        >
+          <div class="flex space-x-2 border-b">
+            <div>
+              <img src="../assets/client/Gambar25.png" alt="" />
+            </div>
+            <div class="text-center font-bold">
+              <h2 class="text-base uppercase tracking-wide">
+                PEMERINTAH PROVINSI NUSA TENGGARA BARAT
+              </h2>
+              <h1 class="text-2xl">SEKRETARIAT DAERAH</h1>
+              <h1 class="text-sm font-normal">
+                Jln Pejanggik Nomor 12 Telepon 0370 - 622373 Kode Pos 83121<br />
+                Website: biroapdim.ntbprov.go.id | Email:
+                biroapdim@ntbprov.go.id
+              </h1>
+            </div>
+          </div>
+
+          <h2
+            class="text-lg font-bold text-center mb-4 uppercase tracking-wide border-b pb-2"
+          >
+            LEMBAR DISPOSISI
+          </h2>
+
+          <div class="grid grid-cols-2 gap-x-8 mb-4">
+            <div class="space-y-1">
+              <div>
+                <span class="font-semibold">Surat dari :</span>
+                {{ detailSurat.surat_dari || "-" }}
+              </div>
+              <div>
+                <span class="font-semibold">No. Surat :</span>
+                {{ detailSurat.noSurat || "-" }}
+              </div>
+              <div>
+                <span class="font-semibold">Tgl. Surat :</span>
+                {{ formatDate(detailSurat.tglSurat) }}
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div>
+                <span class="font-semibold">Diterima Tgl. :</span>
+                {{ formatDate(detailSurat.diterimaTgl) }}
+              </div>
+              <div>
+                <span class="font-semibold">No. Agenda :</span>
+                {{ detailSurat.noAgenda || "-" }}
+              </div>
+              <div class="flex space-x-2">
+                <span class="font-semibold">Sifat Surat :</span>
+                <div class="mt-1">
+                  <div>
+                    <label>
+                      <input
+                        type="checkbox"
+                        disabled
+                        :checked="detailSurat.sifatSurat === 'Segera'"
+                        class="form-checkbox text-blue-600"
+                      />
+                      <span>Segera</span>
+                    </label>
+                    <div>
+                      <label>
+                        <input
+                          type="checkbox"
+                          disabled
+                          :checked="detailSurat.sifatSurat === 'Penting'"
+                          class="form-checkbox text-blue-600"
+                        />
+                        <span>Penting</span>
+                      </label>
+                    </div>
+                    <div>
+                      <label>
+                        <input
+                          type="checkbox"
+                          disabled
+                          :checked="detailSurat.sifatSurat === 'Rahasia'"
+                          class="form-checkbox text-blue-600"
+                        />
+                        <span>Rahasia</span>
+                      </label>
+                    </div>
+                    <div>
+                      <label>
+                        <input
+                          type="checkbox"
+                          disabled
+                          :checked="detailSurat.sifatSurat === 'Biasa'"
+                          class="form-checkbox text-blue-600"
+                        />
+                        <span>Biasa</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4 border border-gray-300 rounded p-2 min-h-[60px]">
+            <div class="font-semibold mb-1">
+              Perihal Surat :
+              <span class="font-normal">{{ detailSurat.catatan || "-" }}</span>
+            </div>
+          </div>
+
+          <div class="flex space-x-2 mb-4 border border-gray-300 rounded p-2">
+            <div class="font-semibold mb-2">Diteruskan Kepada :</div>
+            <div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailSurat.diteruskanKepada &&
+                      detailSurat.diteruskanKepada.includes(
+                        'Kepala Bagian Perencanaan dan Pelaporan'
+                      )
+                    "
+                    class="form-checkbox text-green-600"
+                  />
+                  <span>Kepala Bagian Perencanaan dan Pelaporan</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailSurat.diteruskanKepada &&
+                      detailSurat.diteruskanKepada.includes(
+                        'Kepala Bagian Protokol'
+                      )
+                    "
+                    class="form-checkbox text-green-600"
+                  />
+                  <span>Kepala Bagian Protokol</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailSurat.diteruskanKepada &&
+                      detailSurat.diteruskanKepada.includes(
+                        'Kepala Bagian Materi dan Komunikasi Pimpinan'
+                      )
+                    "
+                    class="form-checkbox text-green-600"
+                  />
+                  <span>Kepala Bagian Materi dan Komunikasi Pimpinan</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailSurat.diteruskanKepada &&
+                      detailSurat.diteruskanKepada.includes(
+                        'Kepala Sub Bagian Tata Usaha'
+                      )
+                    "
+                    class="form-checkbox text-green-600"
+                  />
+                  <span>Kepala Sub Bagian Tata Usaha</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex space-x-2 mb-4 border border-gray-300 rounded p-2">
+            <div class="font-semibold mb-2">Disposisi :</div>
+            <div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailSurat.disposisi &&
+                      detailSurat.disposisi.includes('Proses Tindak Lanjut')
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Proses Lebih Lanjut</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailSurat.disposisi &&
+                      detailSurat.disposisi.includes('Tanggapan dan Saran')
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Tanggapan dan Saran</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailSurat.disposisi &&
+                      detailSurat.disposisi.includes('Jadwalkan')
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Jadwalkan</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailSurat.disposisi &&
+                      detailSurat.disposisi.includes('Wakili/Dampingi')
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Wakili / Dampingi</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailSurat.disposisi &&
+                      detailSurat.disposisi.includes('Koordinasikan')
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Koordinasikan</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailSurat.disposisi &&
+                      detailSurat.disposisi.includes('File/Arsip')
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>File / Arsip</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-12 border border-gray-300 rounded p-2 min-h-[80px]">
+            <div class="font-semibold mb-1">
+              Catatan :
+              <span class="font-normal">{{ detailSurat.catatan || "-" }}</span>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-8 text-sm">
+            <div class="text-center">
+              <div
+                v-if="detailSurat.parafLembarDisposisi"
+                class="flex space-x-2"
+              >
+                <div>
+                  <div class="flex space-x-2">
+                    <div class="font-semibold mb-1">
+                      Paraf dan : <span></span>
+                    </div>
+
+                    <div>
+                      <img
+                        :src="getLampiranUrl(detailSurat.parafLembarDisposisi)"
+                        alt="Paraf"
+                        class="mx-auto max-h-20 object-contain mb-2 border border-gray-300 rounded"
+                      />
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <div class="font-semibold mb-1">
+                      Tanggal :
+                      <span>
+                        {{
+                          detailSurat.tglParafLembarDisposisi
+                            ? detailSurat.tglParafLembarDisposisi.split("T")[0]
+                            : ""
+                        }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else>
+                <div
+                  v-if="
+                    detailSurat.diteruskanKepada &&
+                    detailSurat.diteruskanKepada.includes(loggedUser)
+                  "
+                >
+                  <div class="font-semibold mb-1">Paraf dan :</div>
+                  <input
+                    type="file"
+                    accept="image/*,.pdf"
+                    @change="onLembarParafChange"
+                    class="mb-2 block w-full text-xs text-gray-700"
+                  />
+                  <button
+                    @click="onUploadParaf(detailSurat._id)"
+                    :disabled="!newParafFile || uploadingParaf"
+                    class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition disabled:opacity-50"
+                  >
+                    {{ uploadingParaf ? "Uploading…" : "Upload Paraf" }}
+                  </button>
+
+                  <div class="text-center mt-2">
+                    <div class="font-semibold mb-1">
+                      Tanggal :
+                      <span>
+                        {{
+                          detailSurat.tglParafLembarDisposisi
+                            ? detailSurat.tglParafLembarDisposisi.split("T")[0]
+                            : ""
+                        }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div v-else>
+                  <div class="font-semibold mb-1">Paraf dan :</div>
+                  <div class="text-center mt-2">
+                    <div class="font-semibold mb-1">
+                      Tanggal :
+                      <span>
+                        {{
+                          detailSurat.tglParafLembarDisposisi
+                            ? detailSurat.tglParafLembarDisposisi.split("T")[0]
+                            : ""
+                        }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button
+            @click="closeLembarDisposisiModal"
+            aria-label="Close modal"
+            class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    </transition>
+
+    <TandaTangan
+      v-if="tandaTanganModalVisible && selectedSurat"
+      :pdfUrl="getLampiranUrl(selectedSurat.lampiran[0])"
+      :originalFileName="selectedSurat.lampiran[0]"
+      @signed-pdf-ready="(file) => onSignedPdfReady(selectedSurat, file)"
+      @close="closeTandaTanganModal"
+    />
+  </div>
 </template>
 
 <script>
+import comArsipSurat from "@/services/comArsipSurat";
+import suratApi from "../services/comSuratApi";
 import TandaTangan from "./TandaTangan.vue";
-import comSurat from "../services/comSurat";
-import comUser from "../services/comUser";
 
 export default {
+  name: "SuratManagement",
   components: {
     TandaTangan,
   },
   data() {
     return {
-      isTandaTanganModalOpen: false,
-      imageUrlForTandaTangan: "",
-      surats: [],
-      listSuratAdmin: [],
-      users: [],
-      surat: {
-        nomorSurat: "",
-        perihal: "",
-        pengirim: "",
-        penerima: "",
-        status: "dikirim",
-        isiTidakLanjut: "",
+      suratList: [],
+      loadingSurat: false,
+      loading: false,
+      isEditing: false,
+      editingId: null,
+      modalVisible: false,
+      lembarDisposisiModalVisible: false,
+      form: {
+        surat_dari: "",
+        noSurat: "",
+        tglSurat: "",
+        diterimaTgl: "",
+        noAgenda: "",
+        sifatSurat: "",
+        diteruskanKepada: [],
+        disposisi: [],
+        catatan: "",
+        parafLembarDisposisi: null,
+        tglParafLembarDisposisi: "",
+        statusSurat: "",
+        statusLampiran: "",
         lampiran: [],
-        keterangan: "",
       },
-      isModalOpen: false,
-      isEditMode: false,
-      selectedSuratId: null,
-      isImageModalOpen: false,
-      lampiranPreview: [],
-      isLightboxOpen: false,
-      currentImage: null,
-      isSignedImageUpdated: false,
-      signedImage: null,
-      isVerificationModalOpen: false,
-      isRevisiModalOpen: false,
-      selectedSuratIdForRevisi: null,
-      keteranganRevisi: "",
-      revKet: false,
-      checkSign: "",
-      currentIndex: 0,
+      detailSurat: {},
+      newParafFile: null,
+      uploadingParaf: false,
+      tandaTanganModalVisible: false,
+      selectedSurat: null,
       filters: {
-        q: "",
-        dateFrom: "",
-        dateTo: "",
-        sender: "",
-        receiver: "",
+        noSurat: "",
+        surat_dari: "",
+        sifatSurat: "",
+        tglSuratStart: "",
+        tglSuratEnd: "",
+        diteruskanKepada: "",
+        disposisi: "",
       },
-      isTindakLanjut: false,
     };
   },
-  computed: {
-    loggedInUser() {
-      return this.$store.state.user.username;
-    },
-    role() {
-      return this.$store.state.user.role;
+  methods: {
+    async unlockSurat(surat) {
+      if (this.loading) return;
+      this.loading = true;
+      try {
+        const formData = new FormData();
+        formData.append("statusSurat", "diterima");
+
+        await suratApi.updateSuratApi(surat._id, formData);
+
+        alert(`Surat No. ${surat.noSurat} berhasil di-unlock dan diterima.`);
+
+        await this.fetchSurat();
+      } catch (error) {
+        alert("Gagal unlock surat: " + (error.message || error));
+      } finally {
+        this.loading = false;
+      }
     },
 
-    distinctSenders() {
-      const list = this.role === "admin" ? this.listSuratAdmin : this.surats;
-      return Array.from(new Set(list.map((s) => s.pengirim.username))).sort();
+    async onArsipkanSurat(surat) {
+      if (!confirm(`Arsipkan surat No. ${surat.noSurat} ?`)) return;
+      this.loading = true;
+      try {
+        const payload = {
+          idSurat: surat._id,
+        };
+        await comArsipSurat.postArsipSurat(payload);
+        alert(`Surat No. ${surat.noSurat} berhasil diarsipkan.`);
+      } catch (error) {
+        alert(`Gagal mengarsipkan surat: ${error.message || error}`);
+      } finally {
+        this.loading = false;
+      }
+    },
+    openTandaTanganModal(surat) {
+      this.selectedSurat = surat;
+      this.tandaTanganModalVisible = true;
+    },
+    closeTandaTanganModal() {
+      this.tandaTanganModalVisible = false;
+      this.selectedSurat = null;
     },
 
-    distinctReceivers() {
-      const list = this.role === "admin" ? this.listSuratAdmin : this.surats;
-      return Array.from(new Set(list.map((s) => s.penerima.username))).sort();
+    async onSignedPdfReady(surat, fileFinal) {
+      if (!fileFinal || !(fileFinal instanceof File)) {
+        alert("File tidak valid.");
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append("lampiran", fileFinal);
+        formData.append("statusLampiran", "ditandatangani");
+
+        await suratApi.updateSuratApi(surat._id, formData);
+        alert("Surat berhasil diupdate dengan file hasil tanda tangan.");
+        await this.fetchSurat();
+      } catch (error) {
+        alert("Gagal update surat dengan file tanda tangan: " + error.message);
+      }
     },
-    visibleSurats() {
-      if (this.role === "admin") return this.surats;
-      return this.surats.filter((s) => {
-        return [s.pengirim.username, s.penerima.username].includes(
-          this.loggedInUser
-        );
-      });
+    pdfLampiranUrl() {
+      if (!this.detailSurat.lampiran || this.detailSurat.lampiran.length === 0)
+        return null;
+      return this.getLampiranUrl(this.detailSurat.lampiran[0]);
     },
-    visibleAdmin() {
-      return this.listSuratAdmin;
+    onLembarParafChange(event) {
+      this.newParafFile = event.target.files[0] || null;
+    },
+    async onUploadParaf(id) {
+      if (!this.newParafFile) return;
+      this.uploadingParaf = true;
+      try {
+        const formData = new FormData();
+        formData.append("parafLembarDisposisi", this.newParafFile);
+
+        const today = new Date().toISOString().slice(0, 10);
+        formData.append("tglParafLembarDisposisi", today);
+
+        await suratApi.updateSuratApi(id, formData);
+
+        await this.fetchSurat();
+        this.detailSurat.parafLembarDisposisi = this.newParafFile.name;
+        this.detailSurat.tglParafLembarDisposisi = today;
+        this.newParafFile = null;
+      } catch (err) {
+        alert("Gagal upload paraf: " + err.message);
+      } finally {
+        this.uploadingParaf = false;
+      }
     },
 
-    filteredSurats() {
-      return this.visibleSurats
-        .filter((s) => {
-          const t = this.filters.q.toLowerCase();
-          return (
-            !t ||
-            s.nomorSurat.toLowerCase().includes(t) ||
-            s.perihal.toLowerCase().includes(t)
-          );
-        })
-        .filter((s) => {
-          const d = new Date(s.tanggalTindakLanjut);
-          if (this.filters.dateFrom && d < new Date(this.filters.dateFrom))
-            return false;
-          if (this.filters.dateTo && d > new Date(this.filters.dateTo))
-            return false;
-          return true;
-        })
-        .filter((s) => {
-          return (
-            !this.filters.sender || s.pengirim.username === this.filters.sender
-          );
-        })
-        .filter((s) => {
-          return (
-            !this.filters.receiver ||
-            s.penerima.username === this.filters.receiver
-          );
-        });
+    getLampiranUrl(filename) {
+      const baseUrl =
+        process.env.VUE_APP_FILE_BASE_URL || "http://localhost:3000/uploads/";
+      return baseUrl + filename;
     },
 
-    filteredAdminSurats() {
-      return this.visibleAdmin
-        .filter((s) => {
-          const t = this.filters.q.toLowerCase();
-          return (
-            !t ||
-            s.nomorSurat.toLowerCase().includes(t) ||
-            s.perihal.toLowerCase().includes(t)
+    async fetchSurat() {
+      this.loadingSurat = true;
+      try {
+        const res = await suratApi.getAllSuratApi();
+        this.suratList = res.data.data;
+      } catch {
+        alert("Gagal mengambil data surat");
+      } finally {
+        this.loadingSurat = false;
+      }
+    },
+    openModalCreate() {
+      this.resetForm();
+      this.isEditing = false;
+      this.modalVisible = true;
+    },
+    openModalEdit(surat) {
+      this.isEditing = true;
+      this.editingId = surat._id;
+
+      this.form.surat_dari = surat.surat_dari || "";
+      this.form.noSurat = surat.noSurat || "";
+      this.form.tglSurat = surat.tglSurat ? surat.tglSurat.slice(0, 10) : "";
+      this.form.diterimaTgl = surat.diterimaTgl
+        ? surat.diterimaTgl.slice(0, 10)
+        : "";
+      this.form.noAgenda = surat.noAgenda || "";
+      this.form.sifatSurat = surat.sifatSurat || "";
+      this.form.diteruskanKepada = surat.diteruskanKepada || [];
+      this.form.disposisi = surat.disposisi || [];
+      this.form.catatan = surat.catatan || "";
+      this.form.tglParafLembarDisposisi = surat.tglParafLembarDisposisi
+        ? surat.tglParafLembarDisposisi.slice(0, 10)
+        : "";
+      this.form.statusSurat = surat.statusSurat || "";
+      this.form.statusLampiran = surat.statusLampiran || "";
+      this.form.parafLembarDisposisi = surat.parafLembarDisposisi || "";
+      this.form.lampiran = surat.lampiran || [];
+
+      this.modalVisible = true;
+    },
+    closeModal() {
+      if (this.loading) return;
+      this.modalVisible = false;
+      this.resetForm();
+    },
+    openLembarDisposisiModal(surat) {
+      this.detailSurat = surat;
+      this.lembarDisposisiModalVisible = true;
+    },
+    closeLembarDisposisiModal() {
+      this.lembarDisposisiModalVisible = false;
+      this.detailSurat = {};
+    },
+    onParafFileChange(event) {
+      this.form.parafLembarDisposisi = event.target.files[0] || null;
+    },
+    onLampiranFilesChange(event) {
+      this.form.lampiran = Array.from(event.target.files);
+    },
+    async onSubmit() {
+      this.loading = true;
+      try {
+        const formData = new FormData();
+
+        for (const key in this.form) {
+          if (key === "lampiran" || key === "parafLembarDisposisi") continue;
+
+          if (Array.isArray(this.form[key])) {
+            this.form[key].forEach((val) => formData.append(key, val));
+          } else if (this.form[key] !== null && this.form[key] !== undefined) {
+            formData.append(key, this.form[key]);
+          }
+        }
+
+        if (this.form.parafLembarDisposisi) {
+          formData.append(
+            "parafLembarDisposisi",
+            this.form.parafLembarDisposisi
           );
-        })
-        .filter((s) => {
-          const d = new Date(s.tanggalTindakLanjut);
-          if (this.filters.dateFrom && d < new Date(this.filters.dateFrom))
-            return false;
-          if (this.filters.dateTo && d > new Date(this.filters.dateTo))
-            return false;
-          return true;
-        })
-        .filter((s) => {
-          return (
-            !this.filters.sender || s.pengirim.username === this.filters.sender
-          );
-        })
-        .filter((s) => {
-          return (
-            !this.filters.receiver ||
-            s.penerima.username === this.filters.receiver
-          );
-        });
+        }
+
+        if (this.form.lampiran.length) {
+          this.form.lampiran.forEach((file) => {
+            formData.append("lampiran", file);
+          });
+        }
+
+        if (this.isEditing) {
+          await suratApi.updateSuratApi(this.editingId, formData);
+          alert("Surat berhasil diperbarui");
+          setTimeout(() => {
+            this.modalVisible = false;
+            this.fetchSurat();
+          }, 200);
+        } else {
+          await suratApi.createSuratApi(formData);
+          alert("Surat berhasil dibuat");
+          setTimeout(() => {
+            this.modalVisible = false;
+            this.fetchSurat();
+          }, 200);
+        }
+      } catch (error) {
+        alert("Gagal menyimpan surat: " + error.message);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async onDeleteSurat(id) {
+      if (!confirm("Anda yakin ingin menghapus surat ini?")) return;
+      this.loading = true;
+      try {
+        await suratApi.deleteSuratApi(id);
+        alert("Surat berhasil dihapus");
+        if (this.editingId === id) this.resetForm();
+        await this.fetchSurat();
+      } catch {
+        alert("Gagal menghapus surat");
+      } finally {
+        this.loading = false;
+      }
+    },
+    formatDate(dateStr) {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      return d.toLocaleDateString("id-ID");
+    },
+    resetForm() {
+      this.isEditing = false;
+      this.editingId = null;
+      this.form = {
+        surat_dari: "",
+        noSurat: "",
+        tglSurat: "",
+        diterimaTgl: "",
+        noAgenda: "",
+        sifatSurat: "",
+        diteruskanKepada: [],
+        disposisi: [],
+        catatan: "",
+        parafLembarDisposisi: null,
+        tglParafLembarDisposisi: "",
+        statusSurat: "",
+        statusLampiran: "",
+        lampiran: [],
+      };
     },
   },
   mounted() {
-    this.loggedInUser = this.$store.state.user.username;
-    this.jabatan = this.$store.state.user.jabatan;
-    this.role = this.$store.state.user.role;
-    this.fetchSurats();
-    this.fetchUsers();
-    this.fetchAllSurat();
+    this.fetchSurat();
+    this.loggedUser = this.$store.state.user.jabatan;
+    this.adminRole = this.$store.state.user.role === "admin";
   },
-  methods: {
-    openTindakLanjut() {
-      this.isTindakLanjut = true;
+  computed: {
+    currentUser() {
+      return this.$store.state.user || {};
     },
-    closeTindakLanjut() {
-      this.isTindakLanjut = false;
-    },
-    showPrevImage() {
-      if (this.currentIndex > 0) {
-        this.currentIndex--;
-      }
-    },
-    showNextImage() {
-      if (this.currentIndex < this.lampiranPreview.length - 1) {
-        this.currentIndex++;
-      }
-    },
-    RevSurat(id) {
-      comSurat
-        .updateSuratKeterangan(id, {
-          keterangan: "",
-          status: "direvisi",
-        })
-        .then(() => {
-          this.fetchSurats();
-        })
-        .catch((error) => {
-          console.error("Error updating surat keterangan:", error);
-        });
-      alert("Revisi Telah Dikirim");
-      this.fetchSurats();
-    },
-    openDescKet() {
-      this.revKet = true;
-    },
-    closeRevKet() {
-      this.revKet = false;
-    },
-    openRevisiModal(surat) {
-      this.selectedSuratIdForRevisi = surat._id;
-      this.keteranganRevisi = "";
-      this.isRevisiModalOpen = true;
-    },
-    closeRevisiModal() {
-      this.isRevisiModalOpen = false;
-    },
-    updateSuratStatusToRevisi() {
-      comSurat
-        .updateSuratKeterangan(this.selectedSuratIdForRevisi, {
-          keterangan: this.keteranganRevisi,
-          status: "revisi",
-        })
-        .then(() => {
-          alert("Surat berhasil diperbarui dengan keterangan revisi!");
-          this.fetchSurats();
-          this.closeRevisiModal();
-        })
-        .catch((error) => {
-          console.error("Error updating surat keterangan:", error);
-        });
-    },
-    fetchAllSurat() {
-      comSurat
-        .getAllSurat()
-        .then((response) => {
-          if (this.role === "admin") {
-            this.listSuratAdmin = response.data.data;
-            this.listSuratAdmin = response.data.data.map((surat) => ({
-              ...surat,
-              pengirim: JSON.parse(surat.pengirim),
-              penerima: JSON.parse(surat.penerima),
-            }));
-          } else {
-            response.status(403);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching surats:", error);
-        });
-    },
-    fetchSurats() {
-      const loggedInUser = this.$store.state.user.username;
-      comSurat
-        .getAllSurat()
-        .then((response) => {
-          const parsedData = response.data.data.map((surat) => ({
-            ...surat,
-            pengirim: JSON.parse(surat.pengirim),
-            penerima: JSON.parse(surat.penerima),
-          }));
+    sortedSuratList() {
+      if (!this.suratList || this.suratList.length === 0) return [];
 
-          this.surats = parsedData.filter((surat) => {
-            return (
-              surat.pengirim.username === loggedInUser ||
-              surat.penerima.username === loggedInUser
-            );
-          });
+      const userJabatan = this.currentUser.jabatan;
 
-          const suratForCheckSign = this.surats.find(
-            (surat) => surat.penerima.username === loggedInUser
-          );
-          if (suratForCheckSign) {
-            this.checkSign = suratForCheckSign.penerima.username;
-            console.log(this.checkSign);
-          } else {
-            this.checkSign = "";
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching surats:", error);
-        });
-    },
-    handleSignedImageUpdate(signedBase64) {
-      const byteString = atob(signedBase64.split(",")[1]);
-      const mimeString = signedBase64.split(",")[0].split(":")[1].split(";")[0];
-
-      const ab = new ArrayBuffer(byteString.length);
-      const ia = new Uint8Array(ab);
-      for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-      }
-
-      const blob = new Blob([ab], { type: mimeString });
-      const file = new File([blob], "signed-lampiran.png", {
-        type: mimeString,
-      });
-
-      this.signedImage = file;
-      this.isSignedImageUpdated = true;
-    },
-    openVerificationModal() {
-      this.isVerificationModalOpen = true;
-    },
-    closeVerificationModal() {
-      this.isVerificationModalOpen = false;
-    },
-    updateSuratWithNewLampiran() {
-      const formData = new FormData();
-      formData.append("signature", this.signedImage);
-      const original = this.imageUrlForTandaTangan.replace(
-        "http://localhost:3000/",
-        ""
-      );
-      formData.append("originalPath", original);
-
-      comSurat
-        .updateSignatureReplace(this.selectedSuratId, formData)
-        .then(() => {
-          alert("Surat & lampiran tandatangan dah di-replace!");
-          this.fetchSurats();
-          this.closeAllModals();
-        })
-        .catch((error) => {
-          console.error("Error replace signature:", error);
-        });
-    },
-    closeAllModals() {
-      this.isImageModalOpen = false;
-      this.isTandaTanganModalOpen = false;
-      this.isVerificationModalOpen = false;
-    },
-    removeImage(index) {
-      this.surat.lampiran.splice(index, 1);
-    },
-    openLightbox(index) {
-      this.currentImage = this.surat.lampiran[index];
-      this.isLightboxOpen = true;
-    },
-    closeLightbox() {
-      this.isLightboxOpen = false;
-      this.currentImage = null;
-    },
-    unlockSurat(id) {
-      comSurat
-        .updateStatusSurat(id, "diterima")
-        .then(() => {
-          alert("Surat berhasil diterima!");
-          this.fetchSurats();
-        })
-        .catch((error) => {
-          console.error("Error updating surat status:", error);
-        });
-    },
-    openImageModalPengirim(surat) {
-      this.lampiranPreview = surat.lampiran;
-      this.isImageModalOpen = true;
-    },
-    openImageModal(surat) {
-      if (this.role !== "admin") {
-        if (surat.status === "dikirim") {
-          alert("Harap unlock surat terlebih dahulu sebelum melihat lampiran!");
-          return;
-        }
-
-        if (surat.status === "diterima" && surat.status !== "dibaca") {
-          this.setDibaca(surat);
-        }
-
-        this.lampiranPreview = surat.lampiran;
-        this.currentIndex = 0;
-        this.isImageModalOpen = true;
-      } else {
-        this.lampiranPreview = surat.lampiran;
-        this.currentIndex = 0;
-        this.isImageModalOpen = true;
-      }
-    },
-    closeImageModal() {
-      this.isImageModalOpen = false;
-    },
-    setDibaca(surat) {
-      comSurat
-        .updateStatusSurat(surat._id, "dibaca")
-        .then(() => {
-          this.fetchSurats();
-        })
-        .catch((error) => {
-          console.error("Error updating surat status:", error);
-        });
-    },
-    openTandaTanganModal(image) {
-      this.imageUrlForTandaTangan = this.getFullImgPath(image);
-      this.isTandaTanganModalOpen = true;
-
-      const surat = this.surats.find(
-        (s) =>
-          s.lampiran.includes(image) ||
-          s.lampiran.includes(image.file) ||
-          s.lampiran.includes(image.preview)
+      const suratBelumDiterimaUser = this.suratList.filter(
+        (surat) =>
+          surat.diteruskanKepada &&
+          surat.diteruskanKepada.includes(userJabatan) &&
+          surat.statusSurat !== "diterima"
       );
 
-      if (surat) {
-        this.selectedSuratId = surat._id;
-      } else {
-        console.warn("Surat tidak ditemukan untuk lampiran ini.");
-      }
-    },
-    closeTandaTanganModal() {
-      this.isTandaTanganModalOpen = false;
+      const arsipSurat = this.suratList.filter(
+        (surat) =>
+          surat.parafLembarDisposisi !== null &&
+          surat.parafLembarDisposisi !== "" &&
+          (surat.statusSurat === "diterima" || surat.statusSurat === "")
+      );
+
+      const nonArsipSurat = this.suratList.filter(
+        (surat) =>
+          !suratBelumDiterimaUser.includes(surat) && !arsipSurat.includes(surat)
+      );
+
+      suratBelumDiterimaUser.sort(
+        (a, b) => new Date(b.tglSurat) - new Date(a.tglSurat)
+      );
+      arsipSurat.sort((a, b) => new Date(b.tglSurat) - new Date(a.tglSurat));
+      nonArsipSurat.sort((a, b) => new Date(b.tglSurat) - new Date(a.tglSurat));
+
+      return [...suratBelumDiterimaUser, ...arsipSurat, ...nonArsipSurat];
     },
 
-    getFullImgPath(img) {
-      return `http://localhost:3000/${img}`;
-    },
-    fetchUsers() {
-      comUser
-        .getUsersByStatus("active")
-        .then((response) => {
-          this.users = response.data.data;
-        })
-        .catch((error) => {
-          console.error("Error fetching users:", error);
-        });
-    },
-    createSurat() {
-      const pengirimx = this.$store.state.user;
-      console.log("Pengirim:", pengirimx);
-      this.surat.pengirim = JSON.stringify(pengirimx);
+    filteredSuratList() {
+      const list = this.sortedSuratList;
+      if (!list || list.length === 0) return [];
 
-      const formData = new FormData();
-      for (const key in this.surat) {
-        if (key === "lampiran") {
-          this.surat.lampiran.forEach((file) =>
-            formData.append("lampiran", file.file)
-          );
-        } else {
-          formData.append(key, this.surat[key]);
-        }
-      }
+      const userJabatan = this.currentUser.jabatan;
 
-      comSurat
-        .createSurat(formData)
-        .then(() => {
-          alert("Surat created successfully!");
-          this.fetchSurats();
-          this.closeModal();
-        })
-        .catch((error) => {
-          console.error("Error creating surat:", error);
-        });
-    },
-    editSurat(surat) {
-      this.isModalOpen = true;
-      this.isEditMode = true;
-      this.selectedSuratId = surat._id;
-      this.surat = { ...surat };
-      this.surat.status = surat.status;
-      this.surat.pengirim = JSON.stringify(surat.pengirim);
-      this.surat.penerima = JSON.stringify(surat.penerima);
-      this.surat.lampiran = this.surat.lampiran.map((image) => ({
-        file: image.file,
-        preview: image.preview || this.getFullImgPath(image),
-      }));
-    },
-    updateSurat() {
-      const formData = new FormData();
-      this.surat.lampiran.forEach((imgObj) => {
-        if (imgObj.file) {
-          formData.append("newFiles", imgObj.file);
-        }
-      });
-      const remaining = this.surat.lampiran
-        .filter((imgObj) => !imgObj.file)
-        .map((imgObj) => imgObj.preview.replace("http://localhost:3000/", ""));
-      formData.append("existingPaths", JSON.stringify(remaining));
-      formData.append("nomorSurat", this.surat.nomorSurat);
-      formData.append("perihal", this.surat.perihal);
-      formData.append("pengirim", this.surat.pengirim);
-      formData.append("penerima", this.surat.penerima);
-      formData.append("status", this.surat.status);
-      formData.append("isiTidakLanjut", this.surat.isiTidakLanjut);
-      formData.append("keterangan", this.surat.keterangan);
-
-      comSurat
-        .updateSurat(this.selectedSuratId, formData)
-        .then(() => {
-          alert("Surat updated successfully!");
-          this.fetchSurats();
-          this.closeModal();
-        })
-        .catch((err) => console.error(err));
-    },
-    deleteSurat(id) {
-      if (confirm("Are you sure you want to delete this surat?")) {
-        comSurat
-          .deleteSurat(id)
-          .then(() => {
-            alert("Surat deleted successfully!");
-            this.fetchSurats();
-          })
-          .catch((error) => {
-            console.error("Error deleting surat:", error);
-          });
-      }
-    },
-    openModal() {
-      this.isModalOpen = true;
-      this.isEditMode = false;
-      this.resetSuratForm();
-    },
-    closeModal() {
-      this.isModalOpen = false;
-    },
-    resetSuratForm() {
-      this.surat = {
-        nomorSurat: "",
-        perihal: "",
-        pengirim: "",
-        penerima: "",
-        status: "dikirim",
-        isiTidakLanjut: "",
-        lampiran: [],
-        keterangan: "",
-      };
-    },
-    handleFileUpload(event) {
-      const files = event.target.files;
-      const validFiles = [];
-
-      if (this.surat.lampiran.length + files.length <= 10) {
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          const fileExtension = file.name.split(".").pop().toLowerCase();
-          if (fileExtension === "jpg" || fileExtension === "png") {
-            validFiles.push(file);
-
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              this.surat.lampiran.push({
-                file: file,
-                preview: reader.result,
-              });
-            };
-            reader.readAsDataURL(file);
-          } else {
-            alert(
-              `${file.name} is not a valid file type! Only JPG and PNG are allowed.`
+      let filtered =
+        this.currentUser.role === "admin"
+          ? list
+          : list.filter(
+              (surat) =>
+                surat.diteruskanKepada &&
+                surat.diteruskanKepada.includes(userJabatan)
             );
-          }
-        }
-      } else {
-        alert("You can only upload a maximum of 10 images.");
+
+      if (this.filters.noSurat.trim() !== "") {
+        const val = this.filters.noSurat.trim().toLowerCase();
+        filtered = filtered.filter((surat) =>
+          surat.noSurat?.toLowerCase().includes(val)
+        );
       }
+
+      if (this.filters.surat_dari.trim() !== "") {
+        const val = this.filters.surat_dari.trim().toLowerCase();
+        filtered = filtered.filter((surat) =>
+          surat.surat_dari?.toLowerCase().includes(val)
+        );
+      }
+
+      if (this.filters.sifatSurat) {
+        filtered = filtered.filter(
+          (surat) => surat.sifatSurat === this.filters.sifatSurat
+        );
+      }
+
+      if (this.filters.tglSuratStart) {
+        const startDate = new Date(this.filters.tglSuratStart);
+        filtered = filtered.filter((surat) => {
+          const tgl = new Date(surat.tglSurat);
+          return tgl >= startDate;
+        });
+      }
+      if (this.filters.tglSuratEnd) {
+        const endDate = new Date(this.filters.tglSuratEnd);
+        filtered = filtered.filter((surat) => {
+          const tgl = new Date(surat.tglSurat);
+          return tgl <= endDate;
+        });
+      }
+
+      if (this.filters.diteruskanKepada) {
+        filtered = filtered.filter(
+          (surat) =>
+            surat.diteruskanKepada &&
+            surat.diteruskanKepada.includes(this.filters.diteruskanKepada)
+        );
+      }
+
+      if (this.filters.disposisi) {
+        filtered = filtered.filter(
+          (surat) =>
+            surat.disposisi && surat.disposisi.includes(this.filters.disposisi)
+        );
+      }
+
+      return filtered;
     },
   },
 };
 </script>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

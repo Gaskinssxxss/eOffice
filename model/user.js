@@ -22,6 +22,13 @@ const user = new Schema({
   jabatan: {
     type: String,
     required: true,
+    enum: [
+      "staf",
+      "Kepala Bagian Perencanaan dan Pelaporan",
+      "Kepala Bagian Protokol",
+      "Kepala Bagian Materi dan Komunikasi Pimpinan",
+      "Kepala Sub Bagian Tata Usaha",
+    ],
   },
   status: {
     type: String,

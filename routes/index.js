@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const User = require("../model/user");
-const Surat = require("../model/surat");
-const ArsipSurat = require("../model/arsipSurat");
+const SuratSchema = require("../model/suratSchema");
+const ArsipSchema = require("../model/arsipSchema");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
@@ -16,7 +16,9 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    cb(null, Date.now() + ext);
+    const nameWithoutExt = path.basename(file.originalname, ext);
+    const timestamp = Date.now();
+    cb(null, `${nameWithoutExt}-${timestamp}${ext}`);
   },
 });
 
@@ -26,427 +28,194 @@ const createJwt = (payload) => {
   return jwt.sign({ payload }, SECRET, { expiresIn: MAX_AGE });
 };
 
-/**
- * @route POST api/surat
- * @desc Create new surat
- * @access Private
- */
-router.post("/surat", requireLogin, upload.array("lampiran", 5), (req, res) => {
-  const {
-    nomorSurat,
-    perihal,
-    pengirim,
-    penerima,
-    status,
-    isiTidakLanjut,
-    tanggalTindakLanjut,
-    keterangan,
-  } = req.body;
-
-  if (!req.files || req.files.length === 0) {
-    return res.status(400).json({ message: "No files uploaded." });
+router.get("/hide/arsip", requireLogin, async (req, res) => {
+  try {
+    const arsipList = await ArsipSchema.find().populate("idSurat");
+    return res.status(200).json({ message: "success", data: arsipList });
+  } catch (err) {
+    return res.status(400).json({ message: "failed", error: err.message });
   }
+});
 
-  const lampiran = req.files.map((file) => file.path);
+router.get("/hide/arsip/:id", requireLogin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const arsip = await ArsipSchema.findById(id).populate("idSurat");
+    if (!arsip) {
+      return res.status(404).json({ message: "Arsip not found" });
+    }
+    return res.status(200).json({ message: "success", data: arsip });
+  } catch (err) {
+    return res.status(400).json({ message: "failed", error: err.message });
+  }
+});
 
-  Surat.create({
-    nomorSurat,
-    lampiran,
-    perihal,
-    pengirim,
-    penerima,
-    status,
-    isiTidakLanjut,
-    tanggalTindakLanjut,
-    keterangan,
-  })
-    .then(() => {
-      return res.status(200).json({ message: "success" });
-    })
-    .catch((error) => {
-      console.log(error);
-      return res.status(400).json({ message: "failed", error });
+router.post("/hide/arsip", requireLogin, async (req, res) => {
+  try {
+    const { idSurat, Status } = req.body;
+
+    const surat = await SuratSchema.findById(idSurat);
+    if (!surat) {
+      return res
+        .status(404)
+        .json({ message: "Surat not found, cannot archive" });
+    }
+
+    const newArsip = new ArsipSchema({
+      idSurat,
+      Status: Status || "diarsipkan",
+      archivedAt: Date.now(),
     });
+
+    const savedArsip = await newArsip.save();
+
+    await savedArsip.populate("idSurat");
+
+    return res.status(201).json({ message: "Arsip created", data: savedArsip });
+  } catch (err) {
+    return res.status(400).json({ message: "failed", error: err.message });
+  }
+});
+
+router.post(
+  "/hide/surat",
+  requireLogin,
+  upload.fields([
+    { name: "lampiran", maxCount: 10 },
+    { name: "parafLembarDisposisi", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const {
+        surat_dari,
+        noSurat,
+        tglSurat,
+        diterimaTgl,
+        noAgenda,
+        sifatSurat,
+        diteruskanKepada,
+        disposisi,
+        catatan,
+        tglParafLembarDisposisi,
+        statusLampiran,
+      } = req.body;
+
+      const lampiranFiles = req.files["lampiran"] || [];
+      const parafFile = req.files["parafLembarDisposisi"]
+        ? req.files["parafLembarDisposisi"][0].filename
+        : null;
+
+      const lampiran = lampiranFiles.map((file) => file.filename);
+      const statusSurat = "dikirim";
+
+      const newSurat = new SuratSchema({
+        surat_dari,
+        noSurat,
+        tglSurat,
+        diterimaTgl,
+        noAgenda,
+        sifatSurat,
+        diteruskanKepada: Array.isArray(diteruskanKepada)
+          ? diteruskanKepada
+          : [diteruskanKepada],
+        disposisi: Array.isArray(disposisi) ? disposisi : [disposisi],
+        catatan,
+        parafLembarDisposisi: parafFile,
+        tglParafLembarDisposisi,
+        lampiran,
+        statusSurat,
+        statusLampiran,
+      });
+
+      const savedSurat = await newSurat.save();
+      return res
+        .status(201)
+        .json({ message: "Surat created", data: savedSurat });
+    } catch (err) {
+      console.error(err);
+      return res.status(400).json({ message: "failed", error: err.message });
+    }
+  }
+);
+
+router.get("/hide/surat", requireLogin, async (req, res) => {
+  try {
+    const suratList = await SuratSchema.find();
+    return res.status(200).json({ message: "success", data: suratList });
+  } catch (err) {
+    return res.status(400).json({ message: "failed", error: err.message });
+  }
+});
+
+router.get("/hide/surat/:id", requireLogin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const surat = await SuratSchema.findById(id);
+    if (!surat) {
+      return res.status(404).json({ message: "Surat not found" });
+    }
+    return res.status(200).json({ message: "success", data: surat });
+  } catch (err) {
+    return res.status(400).json({ message: "failed", error: err.message });
+  }
 });
 
 router.put(
-  "/surat/:id/signature-replace",
+  "/hide/surat/:id",
   requireLogin,
-  upload.single("signature"),
+  upload.fields([
+    { name: "lampiran", maxCount: 10 },
+    { name: "parafLembarDisposisi", maxCount: 1 },
+  ]),
   async (req, res) => {
     try {
       const { id } = req.params;
-      const { originalPath } = req.body;
+      const updateData = { ...req.body };
 
-      if (!req.file) {
-        return res.status(400).json({ message: "No signature file uploaded." });
+      if (req.files["lampiran"]) {
+        updateData.lampiran = req.files["lampiran"].map((f) => f.filename);
+      }
+      if (req.files["parafLembarDisposisi"]) {
+        updateData.parafLembarDisposisi =
+          req.files["parafLembarDisposisi"][0].filename;
       }
 
-      const surat = await Surat.findById(id);
-      if (!surat) {
-        return res.status(404).json({ message: "Surat not found." });
+      if (
+        updateData.diteruskanKepada &&
+        typeof updateData.diteruskanKepada === "string"
+      ) {
+        updateData.diteruskanKepada = [updateData.diteruskanKepada];
+      }
+      if (updateData.disposisi && typeof updateData.disposisi === "string") {
+        updateData.disposisi = [updateData.disposisi];
       }
 
-      const newLampiran = surat.lampiran.map((p) =>
-        p === originalPath ? req.file.path : p
-      );
-
-      const updated = await Surat.findByIdAndUpdate(
-        id,
-        {
-          $set: {
-            lampiran: newLampiran,
-            status: "ditandatangani",
-          },
-        },
-        { new: true }
-      );
-
-      return res.status(200).json({ message: "success", data: updated });
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ message: "failed", error: err });
-    }
-  }
-);
-
-/**
- * @route GET api/surat
- * @desc Get all surat
- * @access Private
- */
-router.get("/surat", requireLogin, (req, res) => {
-  Surat.find()
-    .then((surats) => {
-      return res.status(200).json({ message: "success", data: surats });
-    })
-    .catch((err) => {
-      return res.status(400).json({ message: "failed", err });
-    });
-});
-
-/**
- * @route GET api/surat/:id
- * @desc Get a specific surat
- * @access Private (only accessible by pengirim or penerima)
- */
-router.get("/surat/:id", requireLogin, (req, res) => {
-  const { id } = req.params;
-  const userId = req.user._id;
-
-  Surat.findById(id)
-    .then((surat) => {
-      if (!surat) {
-        return res.status(404).json({ message: "surat not found" });
-      }
-
-      if (surat.pengirim !== userId && surat.penerima !== userId) {
-        return res.status(403).json({
-          message:
-            "Access denied. You are neither the sender nor the receiver.",
-        });
-      }
-
-      return res.status(200).json({ message: "success", data: surat });
-    })
-    .catch((err) => {
-      return res.status(400).json({ message: "failed", err });
-    });
-});
-
-/**
- * @route PUT api/surat/:id
- * @desc Update surat
- * @access Private
- */
-router.put(
-  "/surat/:id",
-  requireLogin,
-  upload.array("newFiles", 5),
-  (req, res) => {
-    const { id } = req.params;
-    let lampiran = [];
-    if (req.body.existingPaths) {
-      try {
-        lampiran = JSON.parse(req.body.existingPaths);
-      } catch {
-        res.status(404);
-      }
-    }
-
-    if (req.files && req.files.length) {
-      const newPaths = req.files.map((f) => f.path);
-      lampiran = lampiran.concat(newPaths);
-    }
-    const updateData = {
-      nomorSurat: req.body.nomorSurat,
-      perihal: req.body.perihal,
-      pengirim: req.body.pengirim,
-      penerima: req.body.penerima,
-      status: req.body.status,
-      isiTidakLanjut: req.body.isiTidakLanjut,
-      keterangan: req.body.keterangan,
-      lampiran,
-    };
-
-    Surat.findByIdAndUpdate(id, updateData, { new: true })
-      .then((u) => res.status(200).json({ message: "success", data: u }))
-      .catch((err) => res.status(400).json({ message: "failed", err }));
-  }
-);
-
-// router.put(
-//   "/surat/:id",
-//   requireLogin,
-//   upload.array("lampiran", 5),
-//   (req, res) => {
-//     const { id } = req.params;
-//     const {
-//       nomorSurat,
-//       perihal,
-//       pengirim,
-//       penerima,
-//       status,
-//       isiTidakLanjut,
-//       tanggalTindakLanjut,
-//       keterangan,
-//     } = req.body;
-
-//     const lampiran =
-//       req.files && req.files.length > 0
-//         ? req.files.map((file) => file.path)
-//         : undefined;
-
-//     const updateData = {
-//       nomorSurat,
-//       perihal,
-//       pengirim,
-//       penerima,
-//       status,
-//       isiTidakLanjut,
-//       tanggalTindakLanjut,
-//       keterangan,
-//     };
-
-//     if (lampiran) {
-//       updateData.lampiran = lampiran;
-//     }
-
-//     Surat.findByIdAndUpdate(id, updateData, { new: true })
-//       .then((updatedSurat) => {
-//         return res.status(200).json({ message: "success", data: updatedSurat });
-//       })
-//       .catch((err) => {
-//         return res.status(400).json({ message: "failed", err });
-//       });
-//   }
-// );
-
-/**
- * @route PUT api/surat/:id/status
- * @desc Update status of surat
- * @access Private
- */
-router.put("/surat/:id/status", requireLogin, (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-
-  const validStatuses = [
-    "dikirim",
-    "diterima",
-    "dibaca",
-    "ditandatangani",
-    "ditolak",
-    "revisi",
-    "direvisi",
-  ];
-  if (!validStatuses.includes(status)) {
-    return res.status(400).json({ message: "failed", error: "invalid-status" });
-  }
-
-  Surat.findByIdAndUpdate(id, { status: status }, { new: true })
-    .then((updatedSurat) => {
+      const updatedSurat = await SuratSchema.findByIdAndUpdate(id, updateData, {
+        new: true,
+      });
       if (!updatedSurat) {
-        return res
-          .status(404)
-          .json({ message: "failed", error: "surat-not-found" });
+        return res.status(404).json({ message: "Surat not found" });
       }
-      return res.status(200).json({ message: "success", data: updatedSurat });
-    })
-    .catch((err) => {
-      return res.status(400).json({ message: "failed", err });
-    });
-});
-
-router.put("/surat/:id/keterangan", requireLogin, (req, res) => {
-  const { id } = req.params;
-  const { keterangan } = req.body;
-  const { status } = req.body;
-
-  Surat.findByIdAndUpdate(id, { keterangan, status }, { new: true })
-    .then((updatedSurat) => {
-      return res.status(200).json({ message: "success", data: updatedSurat });
-    })
-    .catch((err) => {
-      return res.status(400).json({ message: "failed", err });
-    });
-});
-
-/**
- * @route DELETE api/surat/:id
- * @desc Delete surat
- * @access Private
- */
-router.delete("/surat/:id", requireLogin, (req, res) => {
-  const { id } = req.params;
-
-  Surat.findByIdAndDelete(id)
-    .then(() => {
       return res
         .status(200)
-        .json({ message: "success", message: "Surat deleted" });
-    })
-    .catch((err) => {
-      return res.status(400).json({ message: "failed", err });
-    });
-});
+        .json({ message: "Surat updated", data: updatedSurat });
+    } catch (err) {
+      return res.status(400).json({ message: "failed", error: err.message });
+    }
+  }
+);
 
-/**
- * @route POST api/arsipsurat
- * @desc Create new arsip surat
- * @access Private
- */
-router.post("/arsipsurat", requireLogin, (req, res) => {
-  const {
-    idSurat,
-    nomorSurat,
-    lampiran,
-    perihal,
-    status,
-    penindakLanjut,
-    tujuanTindakLanjut,
-    isiTidakLanjut,
-    tanggalTindakLanjut,
-    keterangan,
-  } = req.body;
-
-  ArsipSurat.create({
-    idSurat,
-    nomorSurat,
-    lampiran,
-    perihal,
-    status,
-    penindakLanjut,
-    tujuanTindakLanjut,
-    isiTidakLanjut,
-    tanggalTindakLanjut,
-    keterangan,
-  })
-    .then(() => {
-      return res.status(200).json({ message: "success" });
-    })
-    .catch((error) => {
-      console.log(error);
-      return res.status(400).json({ message: "failed", error });
-    });
-});
-
-/**
- * @route GET api/arsipsurat
- * @desc Get all arsip surat
- * @access Private
- */
-router.get("/arsipsurat", requireLogin, (req, res) => {
-  ArsipSurat.find()
-    .then((arsipsurats) => {
-      return res.status(200).json({ message: "success", data: arsipsurats });
-    })
-    .catch((err) => {
-      return res.status(400).json({ message: "failed", err });
-    });
-});
-
-/**
- * @route GET api/arsipsurat/:id
- * @desc Get a specific arsip surat
- * @access Private
- */
-router.get("/arsipsurat/:id", requireLogin, (req, res) => {
-  const { id } = req.params;
-
-  ArsipSurat.findById(id)
-    .then((arsipsurat) => {
-      if (!arsipsurat) {
-        return res.status(404).json({ message: "arsip surat not found" });
-      }
-      return res.status(200).json({ message: "success", data: arsipsurat });
-    })
-    .catch((err) => {
-      return res.status(400).json({ message: "failed", err });
-    });
-});
-
-/**
- * @route PUT api/arsipsurat/:id
- * @desc Update arsip surat
- * @access Private
- */
-router.put("/arsipsurat/:id", requireLogin, (req, res) => {
-  const { id } = req.params;
-  const {
-    idSurat,
-    nomorSurat,
-    lampiran,
-    perihal,
-    status,
-    penindakLanjut,
-    tujuanTindakLanjut,
-    isiTidakLanjut,
-    tanggalTindakLanjut,
-    keterangan,
-  } = req.body;
-
-  const updateData = {
-    idSurat,
-    nomorSurat,
-    lampiran,
-    perihal,
-    status,
-    penindakLanjut,
-    tujuanTindakLanjut,
-    isiTidakLanjut,
-    tanggalTindakLanjut,
-    keterangan,
-  };
-
-  ArsipSurat.findByIdAndUpdate(id, updateData, { new: true })
-    .then((updatedArsipSurat) => {
-      return res
-        .status(200)
-        .json({ message: "success", data: updatedArsipSurat });
-    })
-    .catch((err) => {
-      return res.status(400).json({ message: "failed", err });
-    });
-});
-
-/**
- * @route DELETE api/arsipsurat/:id
- * @desc Delete arsip surat
- * @access Private
- */
-router.delete("/arsipsurat/:id", requireLogin, (req, res) => {
-  const { id } = req.params;
-
-  ArsipSurat.findByIdAndDelete(id)
-    .then(() => {
-      return res
-        .status(200)
-        .json({ message: "success", message: "Arsip surat deleted" });
-    })
-    .catch((err) => {
-      return res.status(400).json({ message: "failed", err });
-    });
+router.delete("/hide/surat/:id", requireLogin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await SuratSchema.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ message: "Surat not found" });
+    }
+    return res.status(200).json({ message: "Surat deleted" });
+  } catch (err) {
+    return res.status(400).json({ message: "failed", error: err.message });
+  }
 });
 
 /**
@@ -553,7 +322,7 @@ router.post("/users/login", (req, res) => {
           .json({ message: "failed", error: "account-inactive" });
       }
 
-      const maxAge = 3 * 24 * 60 * 60;
+      const maxAge = 10 * 24 * 60 * 60;
       const token = createJwt({
         _id: user._id,
         role: user.role,
@@ -638,14 +407,10 @@ router.put("/users/:id/status", requireLogin, (req, res) => {
  * @desc Delete users by status
  * @access Private (admin only)
  */
-router.delete("/users/status/:status", requireLogin, (req, res) => {
-  const { status } = req.params;
+router.delete("/users/:id", requireLogin, (req, res) => {
+  const { id } = req.body;
 
-  if (!["active", "inactive"].includes(status)) {
-    return res.status(400).json({ message: "failed", error: "invalid-status" });
-  }
-
-  User.deleteMany({ status })
+  User.deleteOne({ id })
     .then(() => {
       return res
         .status(200)

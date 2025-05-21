@@ -2,26 +2,12 @@ import Api from "./api";
 
 export default {
   getAllArsipSurat() {
-    return Api.get("/arsipsurat");
+    return Api.get("/hide/arsip");
   },
   getByIdArsipSurat(id) {
-    return Api.get(`/arsipsurat/${id}`);
+    return Api.get(`/hide/arsip/${id}`);
   },
-  createArsipSurat(data) {
-    return Api.post("/arsipsurat", data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  },
-  updateArsipSurat(id, data) {
-    return Api.put(`/arsipsurat/${id}`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  },
-  deleteArsipSurat(id) {
-    return Api.delete(`/arsipsurat/${id}`);
+  postArsipSurat(data) {
+    return Api.post("/hide/arsip", data);
   },
 };

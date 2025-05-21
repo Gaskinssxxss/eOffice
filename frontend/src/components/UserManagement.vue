@@ -15,8 +15,8 @@
         >
           <option value="">Semua Role</option>
           <option value="admin">Admin</option>
-          <option value="staf">Staf</option>
           <option value="pimpinan">Pimpinan</option>
+          <option value="staf">Staf</option>
         </select>
 
         <select
@@ -24,9 +24,17 @@
           class="w-[10rem] h-[2rem] border rounded-sm text-xs 3xl:text-sm px-2 text-gray-600"
         >
           <option value="">Semua Jabatan</option>
-          <option value="admin">Admin</option>
-          <option value="staf">Staf</option>
-          <option value="pimpinan">Pimpinan</option>
+          <option value="Kepala Bagian Perencanaan dan Pelaporan">
+            Kepala Bagian Perencanaan dan Pelaporan
+          </option>
+          <option value="Kepala Bagian Protokol">Kepala Bagian Protokol</option>
+          <option value="Kepala Bagian Materi dan Komunikasi Pimpinan">
+            Kepala Bagian Materi dan Komunikasi Pimpinan
+          </option>
+          <option value="Kepala Sub Bagian Tata Usaha">
+            Kepala Sub Bagian Tata Usaha
+          </option>
+          <option value="staf">staf</option>
         </select>
       </div>
       <div class="flex">
@@ -117,8 +125,8 @@
             >
               <option value="" disabled selected>Role</option>
               <option value="admin">Admin</option>
-              <option value="staf">Staf</option>
               <option value="pimpinan">Pimpinan</option>
+              <option value="staf">Staf</option>
             </select>
           </div>
           <div>
@@ -126,10 +134,20 @@
               v-model="newUser.jabatan"
               class="w-full px-2 py-1 border border-gray-400 text-xs 3xl:text-sm"
             >
-              <option value="" disabled selected>Jabatan</option>
-              <option value="admin">Admin</option>
-              <option value="staf">Staf</option>
-              <option value="pimpinan">Pimpinan</option>
+              <option value="" disabled selected>Semua Jabatan</option>
+              <option value="Kepala Bagian Perencanaan dan Pelaporan">
+                Kepala Bagian Perencanaan dan Pelaporan
+              </option>
+              <option value="Kepala Bagian Protokol">
+                Kepala Bagian Protokol
+              </option>
+              <option value="Kepala Bagian Materi dan Komunikasi Pimpinan">
+                Kepala Bagian Materi dan Komunikasi Pimpinan
+              </option>
+              <option value="Kepala Sub Bagian Tata Usaha">
+                Kepala Sub Bagian Tata Usaha
+              </option>
+              <option value="staf">staf</option>
             </select>
           </div>
           <button

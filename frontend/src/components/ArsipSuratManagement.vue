@@ -1,471 +1,682 @@
 <template>
-  <div class="py-8 space-y-4">
-    <div class="flex space-x-2 items-end">
-      <div class="flex space-x-2">
-        <input
-          v-model="filters.q"
-          type="text"
-          placeholder="Nomor surat..."
-          class="w-[10rem] h-[2rem] border rounded-sm text-xs 3xl:text-sm px-2 placeholder-gray-600 text-gray-600"
-        />
-
-        <select
-          v-model="filters.sender"
-          class="w-[10rem] h-[2rem] border rounded-sm text-xs 3xl:text-sm px-2 text-gray-600"
-        >
-          <option value="">Pengirim</option>
-          <option v-for="u in distinctSenders" :key="u" :value="u">
-            {{ u }}
-          </option>
-        </select>
-
-        <select
-          v-model="filters.receiver"
-          class="w-[10rem] h-[2rem] border rounded-sm text-xs 3xl:text-sm px-2 text-gray-600"
-        >
-          <option value="">Penerima</option>
-          <option v-for="u in distinctReceivers" :key="u" :value="u">
-            {{ u }}
-          </option>
-        </select>
-      </div>
-      <div class="flex space-x-2">
+  <div class="mt-6">
+    <div class="flex justify-between items-center">
+      <div class="flex space-x-2 items-center">
         <div>
-          <label class="block text-sm mb-1">Start :</label>
           <input
-            v-model="filters.dateFrom"
-            type="date"
-            class="w-[10rem] h-[2rem] border rounded-sm text-xs 3xl:text-sm px-2 text-gray-600"
+            v-model="filters.noSurat"
+            type="text"
+            placeholder="Cari No Surat"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
           />
         </div>
 
         <div>
-          <label class="block text-sm mb-1">End:</label>
           <input
-            v-model="filters.dateTo"
-            type="date"
-            class="w-[10rem] h-[2rem] border rounded-sm text-xs 3xl:text-sm px-2 text-gray-600"
+            v-model="filters.surat_dari"
+            type="text"
+            placeholder="Cari Surat Dari"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
           />
+        </div>
+
+        <div>
+          <select
+            v-model="filters.sifatSurat"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+          >
+            <option value="">Semua Sifat Surat</option>
+            <option value="Segera">Segera</option>
+            <option value="Penting">Penting</option>
+            <option value="Rahasia">Rahasia</option>
+            <option value="Biasa">Biasa</option>
+          </select>
+        </div>
+
+        <div>
+          <select
+            v-model="filters.diteruskanKepada"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+          >
+            <option value="">Semua Penerima</option>
+            <option value="Kepala Bagian Perencanaan dan Pelaporan">
+              Kepala Bagian Perencanaan dan Pelaporan
+            </option>
+            <option value="Kepala Bagian Protokol">
+              Kepala Bagian Protokol
+            </option>
+            <option value="Kepala Bagian Materi dan Komunikasi Pimpinan">
+              Kepala Bagian Materi dan Komunikasi Pimpinan
+            </option>
+            <option value="Kepala Sub Bagian Tata Usaha">
+              Kepala Sub Bagian Tata Usaha
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <select
+            v-model="filters.disposisi"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+          >
+            <option value="">Semua Disposisi</option>
+            <option value="Proses Tindak Lanjut">Proses Tindak Lanjut</option>
+            <option value="Tanggapan dan Saran">Tanggapan dan Saran</option>
+            <option value="Jadwalkan">Jadwalkan</option>
+            <option value="Wakili/Dampingi">Wakili/Dampingi</option>
+            <option value="Koordinasikan">Koordinasikan</option>
+            <option value="File/Arsip">File/Arsip</option>
+          </select>
+        </div>
+
+        <div>
+          <input
+            v-model="filters.tglSuratStart"
+            type="date"
+            placeholder="tanggal"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+          />
+        </div>
+      </div>
+
+      <div>
+        <div class="flex">
+          <div>
+            <button
+              @click="openModalCreate"
+              class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm transition"
+            >
+              Tambah Surat
+            </button>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="w-auto overflow-x-auto">
-      <table class="min-w-full bg-white border border-gray-200">
-        <thead>
-          <tr class="bg-gray-100">
+  <div class="w-full py-6">
+    <div class="overflow-x-auto border shadow">
+      <table class="w-full divide-y divide-gray-200">
+        <thead class="bg-gray-100 uppercase">
+          <tr>
             <th
-              class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
+              class="px-4 text-xs py-2 text-center font-semibold text-gray-700 border border-gray-200"
             >
-              Tanggal Arsip
+              No Surat
             </th>
             <th
-              class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
+              class="px-4 text-xs py-2 text-center font-semibold text-gray-700 border border-gray-200"
             >
-              Nomor Surat
+              Lembar Disposisi
             </th>
             <th
-              class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
+              class="px-4 text-xs py-2 text-center font-semibold text-gray-700 border border-gray-200"
             >
-              Perihal
+              Tanggal Surat
             </th>
             <th
-              class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-            >
-              Pengirim
-            </th>
-            <th
-              class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-            >
-              Penerima
-            </th>
-            <th
-              class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-            >
-              Status
-            </th>
-            <th
-              class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-            >
-              Tindak Lanjut
-            </th>
-            <th
-              class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
-            >
-              Method
-            </th>
-            <th
-              class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
+              class="px-4 text-xs py-2 text-center font-semibold text-gray-700 border border-gray-200"
             >
               Lampiran
             </th>
             <th
-              class="px-4 py-2 border border-gray-200 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap"
+              class="px-4 text-xs py-2 text-center font-semibold text-gray-700 border border-gray-200"
             >
-              Ket
+              Status Lampiran
+            </th>
+            <th
+              class="px-4 text-xs py-2 text-center font-semibold text-gray-700 border border-gray-200"
+            >
+              Status Surat
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="bg-white divide-y divide-gray-200 w-full">
           <tr
-            v-for="arsip in filteredArsips"
+            v-for="arsip in filteredArsipList"
             :key="arsip._id"
-            class="text-center"
+            class="hover:bg-gray-50"
           >
-            <td
-              class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-            >
-              {{ formatDate(arsip.archivedAt) }}
+            <td class="px-4 py-4 text-sm border border-gray-200 text-gray-800">
+              {{ arsip.idSurat?.noSurat || "-" }}
             </td>
-            <td
-              class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap w-[15rem] max-w-[15rem] overflow-x-auto"
-            >
-              {{ arsip.nomorSurat }}
-            </td>
-            <td
-              class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap w-[15rem] max-w-[15rem] overflow-x-auto"
-            >
-              {{ arsip.perihal }}
-            </td>
-            <td
-              class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-            >
-              {{ parseUser(arsip.pengirim).username }}
-            </td>
-            <td
-              class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-            >
-              {{ parseUser(arsip.penerima).username }}
-            </td>
-            <td
-              class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-            >
-              {{ arsip.status }}
-            </td>
-            <td
-              class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-            >
-              {{ arsip.isiTidakLanjut }}
-            </td>
-            <td
-              class="px-4 border font-light text-xs 3xl:text-sm text-gray-600"
-            >
-              <span v-if="arsip.method === 'POST'"
-                ><span class="lowercase">di </span>Buat</span
+
+            <td class="px-4 py-4 text-sm border border-gray-200 text-center">
+              <button
+                @click="openLembarDisposisiModal(arsip)"
+                class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
               >
-              <span v-else-if="arsip.method === 'PUT'"
-                ><span class="lowercase">di </span>Edit</span
-              >
-              <span v-else><span class="lowercase">di </span>Hapus</span>
-            </td>
-            <td
-              class="px-4 border font-light text-xs 3xl:text-sm text-gray-600 capitalize whitespace-nowrap"
-            >
-              <div class="list-disc list-inside">
-                <div
-                  v-for="(file, idx) in arsip.lampiran"
-                  :key="idx"
-                  class="truncate max-w-xs"
-                >
-                  <a :href="getFullPath(file)" target="_blank">
-                    <button class="relative group">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="fill-gray-500 hover:fill-black size-6"
-                        viewBox="0 0 256 256"
-                      >
-                        <path
-                          d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"
-                        ></path>
-                      </svg>
-                      <span
-                        class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-                      >
-                        Lampiran
-                      </span>
-                    </button>
-                  </a>
-                </div>
-              </div>
-            </td>
-            <td v-if="arsip.keterangan === ''" class="px-2 border">-</td>
-            <td v-else class="px-2 border">
-              <button @click="openDescKet(arsip)" class="relative group">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="fill-gray-500 hover:fill-black size-6"
-                  viewBox="0 0 256 256"
-                >
-                  <path
-                    d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM184,96a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,96Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,128Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,160Z"
-                  ></path>
-                </svg>
-                <span
-                  class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-                >
-                  Keterangan
-                </span>
+                Lihat
               </button>
-              <div
-                v-if="isDesc"
-                class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
+            </td>
+
+            <td class="px-4 py-4 text-sm border border-gray-200 text-gray-800">
+              {{ formatDate(arsip.idSurat?.tglSurat) }}
+            </td>
+
+            <td class="px-4 py-4 text-sm border border-gray-200 text-gray-800">
+              <span
+                v-if="arsip.idSurat?.lampiran && arsip.idSurat.lampiran.length"
               >
                 <div
-                  class="bg-white p-6 max-w-lg h-auto flex flex-col justify-center items-center space-y-4"
+                  v-for="(file, index) in arsip.idSurat.lampiran"
+                  :key="file"
+                  class="flex space-x-2"
                 >
-                  <div>
-                    <h1>{{ arsip.keterangan }}</h1>
-                  </div>
-                  <div>
-                    <button
-                      @click="closeDescKet"
-                      class="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition duration-200"
-                    >
-                      Tutup
-                    </button>
-                  </div>
+                  <a
+                    :href="getLampiranUrl(file)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-600 hover:underline"
+                  >
+                    {{ file }}
+                  </a>
+                  <span v-if="index < arsip.idSurat.lampiran.length - 1"
+                    >,
+                  </span>
                 </div>
-              </div>
+              </span>
+              <span v-else>-</span>
+            </td>
+
+            <td class="px-4 py-4 text-sm border border-gray-200 text-gray-800">
+              {{ arsip.idSurat.status || "-" }}
+            </td>
+            <td class="px-4 py-4 text-sm border border-gray-200 text-gray-800">
+              {{ arsip.Status || "-" }}
             </td>
           </tr>
-          <tr v-if="filteredArsips.length === 0">
-            <td
-              colspan="9"
-              class="py-4 text-center text-xs 3xl:text-sm text-gray-500 w-full"
-            >
-              Tidak ada data arsip.
+          <tr v-if="filteredArsipList.length === 0">
+            <td colspan="100" class="text-center py-6 text-gray-600">
+              Tidak ada arsip surat tersedia.
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div>
+    <transition name="fade">
       <div
-        class="flex justify-end items-center fixed bottom-10 left-0 right-32 z-10"
+        v-if="lembarDisposisiModalVisible"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4"
       >
-        <button
-          @click="currentPage = Math.max(1, currentPage - 1)"
-          :disabled="currentPage === 1"
+        <div
+          class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-lg text-sm font-sans"
+          @click.self="closeLembarDisposisiModal"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6"
+          <div class="flex space-x-2 border-b">
+            <div>
+              <img src="../assets/client/Gambar25.png" alt="" />
+            </div>
+            <div class="text-center font-bold">
+              <h2 class="text-base uppercase tracking-wide">
+                PEMERINTAH PROVINSI NUSA TENGGARA BARAT
+              </h2>
+              <h1 class="text-2xl">SEKRETARIAT DAERAH</h1>
+              <h1 class="text-sm font-normal">
+                Jln Pejanggik Nomor 12 Telepon 0370 - 622373 Kode Pos 83121<br />
+                Website: biroapdim.ntbprov.go.id | Email:
+                biroapdim@ntbprov.go.id
+              </h1>
+            </div>
+          </div>
+
+          <h2
+            class="text-lg font-bold text-center mb-4 uppercase tracking-wide border-b pb-2"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15.75 19.5 8.25 12l7.5-7.5"
-            />
-          </svg>
-        </button>
-        <span class="px-4 py-2 text-gray-600">
-          Page {{ currentPage }} of {{ totalPages }}
-        </span>
-        <button
-          @click="currentPage = Math.min(totalPages, currentPage + 1)"
-          :disabled="currentPage === totalPages"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6"
+            LEMBAR DISPOSISI
+          </h2>
+
+          <div class="grid grid-cols-2 gap-x-8 mb-4">
+            <div class="space-y-1">
+              <div>
+                <span class="font-semibold">Surat dari :</span>
+                {{ detailArsip.idSurat?.surat_dari || "-" }}
+              </div>
+              <div>
+                <span class="font-semibold">No. Surat :</span>
+                {{ detailArsip.idSurat?.noSurat || "-" }}
+              </div>
+              <div>
+                <span class="font-semibold">Tgl. Surat :</span>
+                {{ formatDate(detailArsip.idSurat?.tglSurat) }}
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div>
+                <span class="font-semibold">Diterima Tgl. :</span>
+                {{ formatDate(detailArsip.idSurat?.diterimaTgl) }}
+              </div>
+              <div>
+                <span class="font-semibold">No. Agenda :</span>
+                {{ detailArsip.idSurat?.noAgenda || "-" }}
+              </div>
+              <div class="flex space-x-2">
+                <span class="font-semibold">Sifat Surat :</span>
+                <div class="mt-1">
+                  <div>
+                    <label>
+                      <input
+                        type="checkbox"
+                        disabled
+                        :checked="detailArsip.idSurat?.sifatSurat === 'Segera'"
+                        class="form-checkbox text-blue-600"
+                      />
+                      <span>Segera</span>
+                    </label>
+                    <div>
+                      <label>
+                        <input
+                          type="checkbox"
+                          disabled
+                          :checked="
+                            detailArsip.idSurat?.sifatSurat === 'Penting'
+                          "
+                          class="form-checkbox text-blue-600"
+                        />
+                        <span>Penting</span>
+                      </label>
+                    </div>
+                    <div>
+                      <label>
+                        <input
+                          type="checkbox"
+                          disabled
+                          :checked="
+                            detailArsip.idSurat?.sifatSurat === 'Rahasia'
+                          "
+                          class="form-checkbox text-blue-600"
+                        />
+                        <span>Rahasia</span>
+                      </label>
+                    </div>
+                    <div>
+                      <label>
+                        <input
+                          type="checkbox"
+                          disabled
+                          :checked="detailArsip.idSurat?.sifatSurat === 'Biasa'"
+                          class="form-checkbox text-blue-600"
+                        />
+                        <span>Biasa</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4 border border-gray-300 rounded p-2 min-h-[60px]">
+            <div class="font-semibold mb-1">
+              Perihal Surat :
+              <span class="font-normal">{{
+                detailArsip.idSurat?.catatan || "-"
+              }}</span>
+            </div>
+          </div>
+
+          <div class="flex space-x-2 mb-4 border border-gray-300 rounded p-2">
+            <div class="font-semibold mb-2">Diteruskan Kepada :</div>
+            <div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailArsip.idSurat?.diteruskanKepada &&
+                      detailArsip.idSurat.diteruskanKepada.includes(
+                        'Kepala Bagian Perencanaan dan Pelaporan'
+                      )
+                    "
+                    class="form-checkbox text-green-600"
+                  />
+                  <span>Kepala Bagian Perencanaan dan Pelaporan</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailArsip.idSurat?.diteruskanKepada &&
+                      detailArsip.idSurat.diteruskanKepada.includes(
+                        'Kepala Bagian Protokol'
+                      )
+                    "
+                    class="form-checkbox text-green-600"
+                  />
+                  <span>Kepala Bagian Protokol</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailArsip.idSurat?.diteruskanKepada &&
+                      detailArsip.idSurat.diteruskanKepada.includes(
+                        'Kepala Bagian Materi dan Komunikasi Pimpinan'
+                      )
+                    "
+                    class="form-checkbox text-green-600"
+                  />
+                  <span>Kepala Bagian Materi dan Komunikasi Pimpinan</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailArsip.idSurat?.diteruskanKepada &&
+                      detailArsip.idSurat.diteruskanKepada.includes(
+                        'Kepala Sub Bagian Tata Usaha'
+                      )
+                    "
+                    class="form-checkbox text-green-600"
+                  />
+                  <span>Kepala Sub Bagian Tata Usaha</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex space-x-2 mb-4 border border-gray-300 rounded p-2">
+            <div class="font-semibold mb-2">Disposisi :</div>
+            <div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailArsip.idSurat?.disposisi &&
+                      detailArsip.idSurat.disposisi.includes(
+                        'Proses Tindak Lanjut'
+                      )
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Proses Lebih Lanjut</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailArsip.idSurat?.disposisi &&
+                      detailArsip.idSurat.disposisi.includes(
+                        'Tanggapan dan Saran'
+                      )
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Tanggapan dan Saran</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailArsip.idSurat?.disposisi &&
+                      detailArsip.idSurat.disposisi.includes('Jadwalkan')
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Jadwalkan</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailArsip.idSurat?.disposisi &&
+                      detailArsip.idSurat.disposisi.includes('Wakili/Dampingi')
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Wakili / Dampingi</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailArsip.idSurat?.disposisi &&
+                      detailArsip.idSurat.disposisi.includes('Koordinasikan')
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>Koordinasikan</span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled
+                    :checked="
+                      detailArsip.idSurat?.disposisi &&
+                      detailArsip.idSurat.disposisi.includes('File/Arsip')
+                    "
+                    class="form-checkbox text-purple-600"
+                  />
+                  <span>File / Arsip</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-12 border border-gray-300 rounded p-2 min-h-[80px]">
+            <div class="font-semibold mb-1">
+              Catatan :
+              <span class="font-normal">{{
+                detailArsip.idSurat?.catatan || "-"
+              }}</span>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-8 text-sm">
+            <div class="text-center">
+              <div
+                v-if="detailArsip.idSurat?.parafLembarDisposisi"
+                class="flex space-x-2"
+              >
+                <div>
+                  <div class="flex space-x-2">
+                    <div class="font-semibold mb-1">
+                      Paraf dan : <span></span>
+                    </div>
+
+                    <div>
+                      <img
+                        :src="
+                          getLampiranUrl(
+                            detailArsip.idSurat?.parafLembarDisposisi
+                          )
+                        "
+                        alt="Paraf"
+                        class="mx-auto max-h-20 object-contain mb-2 border border-gray-300 rounded"
+                      />
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <div class="font-semibold mb-1">
+                      Tanggal :
+                      <span>
+                        {{
+                          detailArsip.idSurat?.tglParafLembarDisposisi
+                            ? detailArsip.idSurat.tglParafLembarDisposisi.split(
+                                "T"
+                              )[0]
+                            : ""
+                        }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else>-</div>
+            </div>
+          </div>
+
+          <button
+            @click="closeLembarDisposisiModal"
+            aria-label="Close modal"
+            class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m8.25 4.5 7.5 7.5-7.5 7.5"
-            />
-          </svg>
-        </button>
+            ✕
+          </button>
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script>
-import comArsip from "../services/comArsipSurat";
+import arsipApi from "../services/comArsipSurat";
 
 export default {
-  name: "ArsipSuratManagement",
+  name: "ArsipSurat",
   data() {
     return {
-      arsips: [],
-      baseURL: "http://localhost:3000/",
+      arsipList: [],
+      loading: false,
+      lembarDisposisiModalVisible: false,
+      detailArsip: {},
       filters: {
-        q: "",
-        dateFrom: "",
-        dateTo: "",
-        sender: "",
-        receiver: "",
+        noSurat: "",
+        surat_dari: "",
+        sifatSurat: "",
+        diteruskanKepada: "",
+        disposisi: "",
+        tglSuratStart: "",
+        tglSuratEnd: "",
       },
-      isDesc: false,
-      currentPage: 1,
-      itemsPerPage: 5,
     };
   },
-  computed: {
-    loggedInUser() {
-      return this.$store.state.user.username;
-    },
-    role() {
-      return this.$store.state.user.role;
-    },
-
-    visibleByRole() {
-      if (this.role === "admin") {
-        return this.arsips;
+  methods: {
+    async fetchArsip() {
+      this.loading = true;
+      try {
+        const res = await arsipApi.getAllArsipSurat();
+        this.arsipList = res.data.data || [];
+      } catch (err) {
+        alert("Gagal mengambil data arsip surat: " + (err.message || err));
+      } finally {
+        this.loading = false;
       }
-      return this.arsips.filter((a) => {
-        const p = this.parseUser(a.pengirim).username;
-        const q = this.parseUser(a.penerima).username;
-        return p === this.loggedInUser || q === this.loggedInUser;
-      });
     },
-
-    distinctSenders() {
-      const set = new Set(
-        this.arsips.map((a) => this.parseUser(a.pengirim).username)
-      );
-      return Array.from(set).sort();
+    openLembarDisposisiModal(arsip) {
+      this.detailArsip = arsip;
+      this.lembarDisposisiModalVisible = true;
     },
-
-    distinctReceivers() {
-      const set = new Set(
-        this.arsips.map((a) => this.parseUser(a.penerima).username)
-      );
-      return Array.from(set).sort();
+    closeLembarDisposisiModal() {
+      this.lembarDisposisiModalVisible = false;
+      this.detailArsip = {};
     },
-    filteredArsips() {
-      const filteredData = this.visibleByRole
-        .filter((a) => {
-          const t = this.filters.q.toLowerCase();
-          if (t) {
-            if (
-              !a.nomorSurat.toLowerCase().includes(t) &&
-              !a.perihal.toLowerCase().includes(t)
-            ) {
-              return false;
-            }
-          }
-          return true;
-        })
-        .filter((a) => {
-          const d = new Date(a.archivedAt);
-          if (this.filters.dateFrom && d < new Date(this.filters.dateFrom)) {
-            return false;
-          }
-          if (this.filters.dateTo && d > new Date(this.filters.dateTo)) {
-            return false;
-          }
-          return true;
-        })
-        .filter((a) => {
-          if (this.filters.sender) {
-            return this.parseUser(a.pengirim).username === this.filters.sender;
-          }
-          return true;
-        })
-        .filter((a) => {
-          if (this.filters.receiver) {
-            return (
-              this.parseUser(a.penerima).username === this.filters.receiver
-            );
-          }
-          return true;
-        });
-      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      return filteredData.slice(startIndex, startIndex + this.itemsPerPage);
+    formatDate(dateStr) {
+      if (!dateStr) return "-";
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr;
+      return d.toLocaleDateString("id-ID");
     },
-
-    totalPages() {
-      return Math.ceil(this.visibleByRole.length / this.itemsPerPage);
+    getLampiranUrl(filename) {
+      const baseUrl =
+        process.env.VUE_APP_FILE_BASE_URL || "http://localhost:3000/uploads/";
+      return baseUrl + filename;
     },
-    // filteredArsips() {
-    //   return this.visibleByRole
-    //     .filter((a) => {
-    //       const t = this.filters.q.toLowerCase();
-    //       if (t) {
-    //         if (
-    //           !a.nomorSurat.toLowerCase().includes(t) &&
-    //           !a.perihal.toLowerCase().includes(t)
-    //         ) {
-    //           return false;
-    //         }
-    //       }
-    //       return true;
-    //     })
-    //     .filter((a) => {
-    //       const d = new Date(a.archivedAt);
-    //       if (this.filters.dateFrom && d < new Date(this.filters.dateFrom)) {
-    //         return false;
-    //       }
-    //       if (this.filters.dateTo && d > new Date(this.filters.dateTo)) {
-    //         return false;
-    //       }
-    //       return true;
-    //     })
-    //     .filter((a) => {
-    //       if (this.filters.sender) {
-    //         return this.parseUser(a.pengirim).username === this.filters.sender;
-    //       }
-    //       return true;
-    //     })
-    //     .filter((a) => {
-    //       if (this.filters.receiver) {
-    //         return (
-    //           this.parseUser(a.penerima).username === this.filters.receiver
-    //         );
-    //       }
-    //       return true;
-    //     });
-    // },
   },
   mounted() {
-    this.fetchArsipSurats();
+    this.fetchArsip();
   },
-  methods: {
-    openDescKet() {
-      this.isDesc = true;
-    },
-    closeDescKet() {
-      this.isDesc = false;
-    },
-    fetchArsipSurats() {
-      comArsip
-        .getAllArsipSurat()
-        .then((res) => {
-          this.arsips = res.data.data.map((a) => ({
-            ...a,
-            archivedAt: new Date(a.archivedAt),
-          }));
-        })
-        .catch((err) => console.error("Error fetching arsip:", err));
-    },
-    parseUser(str) {
-      try {
-        return JSON.parse(str);
-      } catch {
-        return { username: str };
+  computed: {
+    filteredArsipList() {
+      if (!this.arsipList || this.arsipList.length === 0) return [];
+
+      let filtered = this.arsipList;
+
+      if (this.filters.noSurat.trim() !== "") {
+        const val = this.filters.noSurat.trim().toLowerCase();
+        filtered = filtered.filter((arsip) =>
+          (arsip.idSurat?.noSurat || "").toLowerCase().includes(val)
+        );
       }
-    },
-    formatDate(date) {
-      const d = new Date(date);
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      return `${yyyy}-${mm}-${dd}`;
-    },
-    getFullPath(path) {
-      return this.baseURL + path.replace(/\\\\/g, "/");
+
+      if (this.filters.surat_dari.trim() !== "") {
+        const val = this.filters.surat_dari.trim().toLowerCase();
+        filtered = filtered.filter((arsip) =>
+          (arsip.idSurat?.surat_dari || "").toLowerCase().includes(val)
+        );
+      }
+
+      if (this.filters.sifatSurat) {
+        filtered = filtered.filter(
+          (arsip) => arsip.idSurat?.sifatSurat === this.filters.sifatSurat
+        );
+      }
+
+      if (this.filters.diteruskanKepada) {
+        filtered = filtered.filter(
+          (arsip) =>
+            arsip.idSurat?.diteruskanKepada &&
+            arsip.idSurat.diteruskanKepada.includes(
+              this.filters.diteruskanKepada
+            )
+        );
+      }
+
+      if (this.filters.disposisi) {
+        filtered = filtered.filter(
+          (arsip) =>
+            arsip.idSurat?.disposisi &&
+            arsip.idSurat.disposisi.includes(this.filters.disposisi)
+        );
+      }
+
+      if (this.filters.tglSuratStart) {
+        const startDate = new Date(this.filters.tglSuratStart);
+        filtered = filtered.filter((arsip) => {
+          const tgl = new Date(arsip.idSurat?.tglSurat);
+          return tgl >= startDate;
+        });
+      }
+
+      if (this.filters.tglSuratEnd) {
+        const endDate = new Date(this.filters.tglSuratEnd);
+        filtered = filtered.filter((arsip) => {
+          const tgl = new Date(arsip.idSurat?.tglSurat);
+          return tgl <= endDate;
+        });
+      }
+
+      return filtered;
     },
   },
 };
 </script>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

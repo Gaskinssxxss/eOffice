@@ -92,6 +92,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   const isAuthenticated = store.state.userLoggedIn;
+
   if (!isAuthenticated && to.meta.authRequired) {
     next({ path: "/" });
   } else if (isAuthenticated && to.meta.authForbidden) {

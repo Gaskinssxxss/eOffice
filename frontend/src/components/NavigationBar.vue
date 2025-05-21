@@ -81,7 +81,7 @@
       <div v-if="isLoggin" class="flex space-x-2 2xl:space-x-4 items-center">
         <div>
           <h1 class="text-white">
-            {{ userInfo.username }} ({{ userInfo.jabatan }})
+            {{ userInfo.username }}
           </h1>
         </div>
         <button @click="logout" class="bg-red-700 hover:bg-red-800 rounded-sm">

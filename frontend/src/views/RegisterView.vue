@@ -67,8 +67,8 @@
         >
           <option value="">Select Role</option>
           <option value="admin">Admin</option>
-          <option value="staf">Staf</option>
           <option value="pimpinan">Pimpinan</option>
+          <option value="staf">Staf</option>
         </select>
       </div>
 
@@ -80,14 +80,20 @@
         >
         <select
           v-model="jabatan"
-          id="jabatan"
-          required
-          class="mt-2 p-2 w-[20rem] text-xs 3xl:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          class="w-[10rem] h-[2rem] border rounded-sm text-xs 3xl:text-sm px-2 text-gray-600"
         >
-          <option value="">Select Jabatan</option>
-          <option value="staff">Staff</option>
-          <option value="supervisor">Supervisor</option>
-          <option value="lead">Lead</option>
+          <option value="">Semua Jabatan</option>
+          <option value="Kepala Bagian Perencanaan dan Pelaporan">
+            Kepala Bagian Perencanaan dan Pelaporan
+          </option>
+          <option value="Kepala Bagian Protokol">Kepala Bagian Protokol</option>
+          <option value="Kepala Bagian Materi dan Komunikasi Pimpinan">
+            Kepala Bagian Materi dan Komunikasi Pimpinan
+          </option>
+          <option value="Kepala Sub Bagian Tata Usaha">
+            Kepala Sub Bagian Tata Usaha
+          </option>
+          <option value="staf">staf</option>
         </select>
       </div>
 
