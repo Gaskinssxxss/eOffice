@@ -9,6 +9,7 @@
     >
       <div
         v-if="pdfData"
+        ref="pdfContainer"
         class="relative flex-1 overflow-auto border border-gray-300 rounded-t-lg"
       >
         <pdf
@@ -25,8 +26,8 @@
             position: 'absolute',
             top: signaturePos.y + 'px',
             left: signaturePos.x + 'px',
-            width: '150px',
-            height: '50px',
+            width: '75px',
+            height: '100px',
             cursor: 'grab',
             userSelect: 'none',
             touchAction: 'none',
@@ -197,15 +198,19 @@ export default {
         clientX = event.touches[0].clientX;
         clientY = event.touches[0].clientY;
       }
-      const container = event.target.parentNode.getBoundingClientRect();
-      let newX = clientX - container.left - this.dragOffset.x;
-      let newY = clientY - container.top - this.dragOffset.y;
+      const container = this.$refs.pdfContainer;
+      const containerRect = container.getBoundingClientRect();
+      const scrollTop = container.scrollTop;
+      const scrollLeft = container.scrollLeft;
 
-      newX = Math.max(0, Math.min(newX, container.width - 150));
-      newY = Math.max(0, Math.min(newY, container.height - 50));
+      let newX = clientX - containerRect.left + scrollLeft - this.dragOffset.x;
+      let newY = clientY - containerRect.top + scrollTop - this.dragOffset.y;
+
+      newX = Math.max(0, Math.min(newX, container.scrollWidth - 75));
+      newY = Math.max(0, Math.min(newY, container.scrollHeight - 100));
+
       this.signaturePos = { x: newX, y: newY };
     },
-
     stopDrag() {
       this.dragging = false;
       window.removeEventListener("mousemove", this.onDrag);
@@ -225,10 +230,22 @@ export default {
         );
         const pngImage = await this.pdfDoc.embedPng(pngBytes);
         const page = this.pdfDoc.getPage(this.currentPage - 1);
-        const { height } = page.getSize();
-        const x = this.signaturePos.x;
-        const y = height - this.signaturePos.y - 50;
-        page.drawImage(pngImage, { x, y, width: 150, height: 50 });
+        const { width: pdfWidth, height: pdfHeight } = page.getSize();
+
+        const container = this.$refs.pdfContainer;
+
+        const scaleX = pdfWidth / container.scrollWidth;
+        const scaleY = pdfHeight / container.scrollHeight;
+
+        const x = this.signaturePos.x * scaleX;
+        const y = pdfHeight - this.signaturePos.y * scaleY - 100 * scaleY;
+
+        page.drawImage(pngImage, {
+          x,
+          y,
+          width: 75 * scaleX,
+          height: 100 * scaleY,
+        });
 
         const pdfBytes = await this.pdfDoc.save();
         const blob = new Blob([pdfBytes], { type: "application/pdf" });

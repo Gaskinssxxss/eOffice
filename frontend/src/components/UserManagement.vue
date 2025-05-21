@@ -1,5 +1,5 @@
 <template>
-  <div class="py-14">
+  <div class="mt-6">
     <div class="mb-4 flex justify-between items-center">
       <div class="space-x-2">
         <input

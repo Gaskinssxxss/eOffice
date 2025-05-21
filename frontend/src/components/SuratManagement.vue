@@ -200,6 +200,7 @@
               {{ surat.statusSurat || "-" }}
             </td>
             <td
+              v-if="surat.statusSurat !== 'diarsipkan'"
               class="px-2 py-4 text-sm border border-gray-200 text-center space-x-2"
             >
               <button @click="openModalEdit(surat)" class="relative group">
@@ -257,7 +258,8 @@
               v-if="
                 surat.diteruskanKepada &&
                 surat.diteruskanKepada.includes(loggedUser) &&
-                surat.statusSurat !== 'diterima'
+                surat.statusSurat !== 'diterima' &&
+                surat.statusSurat !== 'diarsipkan'
               "
               class="absolute inset-0 bg-gray-200 bg-opacity-80 flex items-center justify-center z-10"
               colspan="100"
@@ -1270,7 +1272,13 @@ export default {
           idSurat: surat._id,
         };
         await comArsipSurat.postArsipSurat(payload);
+
+        const formData = new FormData();
+        formData.append("statusSurat", "diarsipkan");
+
+        await suratApi.updateSuratApi(surat._id, formData);
         alert(`Surat No. ${surat.noSurat} berhasil diarsipkan.`);
+        this.fetchSurat();
       } catch (error) {
         alert(`Gagal mengarsipkan surat: ${error.message || error}`);
       } finally {
@@ -1299,6 +1307,7 @@ export default {
 
         await suratApi.updateSuratApi(surat._id, formData);
         alert("Surat berhasil diupdate dengan file hasil tanda tangan.");
+        this.tandaTanganModalVisible = false;
         await this.fetchSurat();
       } catch (error) {
         alert("Gagal update surat dengan file tanda tangan: " + error.message);
@@ -1324,7 +1333,11 @@ export default {
 
         await suratApi.updateSuratApi(id, formData);
 
+        this.lembarDisposisiModalVisible = false;
         await this.fetchSurat();
+        setTimeout(() => {
+          this.lembarDisposisiModalVisible = true;
+        }, 300);
         this.detailSurat.parafLembarDisposisi = this.newParafFile.name;
         this.detailSurat.tglParafLembarDisposisi = today;
         this.newParafFile = null;

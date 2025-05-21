@@ -137,11 +137,11 @@
             :key="arsip._id"
             class="hover:bg-gray-50"
           >
-            <td class="px-4 py-4 text-sm border border-gray-200 text-gray-800">
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
               {{ arsip.idSurat?.noSurat || "-" }}
             </td>
 
-            <td class="px-4 py-4 text-sm border border-gray-200 text-center">
+            <td class="px-4 py-4 text-xs border border-gray-200 text-center">
               <button
                 @click="openLembarDisposisiModal(arsip)"
                 class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
@@ -150,11 +150,11 @@
               </button>
             </td>
 
-            <td class="px-4 py-4 text-sm border border-gray-200 text-gray-800">
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
               {{ formatDate(arsip.idSurat?.tglSurat) }}
             </td>
 
-            <td class="px-4 py-4 text-sm border border-gray-200 text-gray-800">
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
               <span
                 v-if="arsip.idSurat?.lampiran && arsip.idSurat.lampiran.length"
               >
@@ -179,10 +179,10 @@
               <span v-else>-</span>
             </td>
 
-            <td class="px-4 py-4 text-sm border border-gray-200 text-gray-800">
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
               {{ arsip.idSurat.status || "-" }}
             </td>
-            <td class="px-4 py-4 text-sm border border-gray-200 text-gray-800">
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
               {{ arsip.Status || "-" }}
             </td>
           </tr>
