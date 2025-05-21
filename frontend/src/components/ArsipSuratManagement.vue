@@ -137,7 +137,9 @@
             :key="arsip._id"
             class="hover:bg-gray-50"
           >
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td
+              class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center"
+            >
               {{ arsip.idSurat?.noSurat || "-" }}
             </td>
 
@@ -150,11 +152,15 @@
               </button>
             </td>
 
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td
+              class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center"
+            >
               {{ formatDate(arsip.idSurat?.tglSurat) }}
             </td>
 
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td
+              class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center"
+            >
               <span
                 v-if="arsip.idSurat?.lampiran && arsip.idSurat.lampiran.length"
               >
@@ -179,10 +185,14 @@
               <span v-else>-</span>
             </td>
 
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td
+              class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center"
+            >
               {{ arsip.idSurat.status || "-" }}
             </td>
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td
+              class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center"
+            >
               {{ arsip.Status || "-" }}
             </td>
           </tr>

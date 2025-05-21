@@ -143,7 +143,9 @@
             class="hover:bg-gray-50 relative"
             style="position: relative"
           >
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td
+              class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center"
+            >
               {{ surat.noSurat }}
             </td>
             <td class="px-4 py-4 text-sm border border-gray-200 text-center">
@@ -154,10 +156,14 @@
                 Lihat
               </button>
             </td>
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td
+              class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center"
+            >
               {{ formatDate(surat.tglSurat) }}
             </td>
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td
+              class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center"
+            >
               <span v-if="surat.lampiran && surat.lampiran.length">
                 <div
                   v-for="(file, index) in surat.lampiran"
@@ -193,10 +199,14 @@
               </span>
               <span v-else>-</span>
             </td>
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td
+              class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center"
+            >
               {{ surat.statusLampiran || "-" }}
             </td>
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td
+              class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center"
+            >
               {{ surat.statusSurat || "-" }}
             </td>
             <td
@@ -290,7 +300,7 @@
             :key="surat._id"
             class="hover:bg-gray-50"
           >
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center">
               {{ surat.noSurat }}
             </td>
             <td class="px-4 py-4 text-sm border border-gray-200 text-center">
@@ -301,10 +311,10 @@
                 Lihat
               </button>
             </td>
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center">
               {{ formatDate(surat.tglSurat) }}
             </td>
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center">
               <span v-if="surat.lampiran && surat.lampiran.length">
                 <div
                   v-for="file in surat.lampiran"
@@ -342,10 +352,10 @@
               </span>
               <span v-else>-</span>
             </td>
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center">
               {{ surat.statusSurat || "-" }}
             </td>
-            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800">
+            <td class="px-4 py-4 text-xs border border-gray-200 text-gray-800 text-center">
               {{ surat.statusLampiran || "-" }}
             </td>
             <td
