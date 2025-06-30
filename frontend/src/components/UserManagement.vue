@@ -39,7 +39,7 @@
       </div>
       <div class="flex">
         <div
-          class="bg-blue-500 hover:bg-blue-600 rounded-sm flex items-center px-2 py-1"
+          class="bg-blue-600 text-white rounded hover:bg-blue-700 text-sm transition flex items-center px-4 py-2"
         >
           <div>
             <svg

@@ -23,7 +23,7 @@
         <div>
           <select
             v-model="filters.sifatSurat"
-            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize text-gray-600"
           >
             <option value="">Semua Sifat Surat</option>
             <option value="Segera">Segera</option>
@@ -36,7 +36,7 @@
         <div>
           <select
             v-model="filters.diteruskanKepada"
-            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize text-gray-600"
           >
             <option value="">Semua Penerima</option>
             <option value="Kepala Bagian Perencanaan dan Pelaporan">
@@ -57,7 +57,7 @@
         <div>
           <select
             v-model="filters.disposisi"
-            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize text-gray-600"
           >
             <option value="">Semua Disposisi</option>
             <option value="Proses Tindak Lanjut">Proses Tindak Lanjut</option>
@@ -74,27 +74,36 @@
             v-model="filters.tglSuratStart"
             type="date"
             placeholder="tanggal"
-            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize"
+            class="w-[10rem] border px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 text-xs font-semibold placeholder-gray-400 capitalize text-gray-600"
           />
         </div>
       </div>
 
       <div>
-        <div class="flex">
+        <div
+          class="flex space-x-2 items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm transition"
+        >
           <div>
-            <button
-              @click="openModalCreate"
-              class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm transition"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="size-6 fill-white"
+              fill="#000000"
+              viewBox="0 0 256 256"
             >
-              Tambah Surat
-            </button>
+              <path
+                d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-40-64a8,8,0,0,1-8,8H136v16a8,8,0,0,1-16,0V160H104a8,8,0,0,1,0-16h16V128a8,8,0,0,1,16,0v16h16A8,8,0,0,1,160,152Z"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <button @click="openModalCreate" class="">Tambah Surat</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="w-full py-6">
+  <div class="w-full py-4">
     <div class="border shadow">
       <table class="w-full divide-y divide-gray-200">
         <thead class="bg-gray-100 uppercase">
