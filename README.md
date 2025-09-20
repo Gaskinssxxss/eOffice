@@ -15,7 +15,12 @@ unreachable so for protecting routes and other stuff in frontend is used state o
 done by `Vuex`.
 
 ## commands
-
+## dependensi install backend
+- `npm install` 
+## dependensi install frontend
+- `cd frontend` 
+- `npm install` 
+##start project
 - `npm run backend` - starts the express server
 - `npm run frontend` - starts vue development server
 - `npm run dev` - starts both => backend and frontend
