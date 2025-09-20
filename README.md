@@ -19,7 +19,8 @@ done by `Vuex`.
 - `npm install` 
 ## dependensi install frontend
 - `cd frontend` 
-- `npm install` 
+- `npm install`
+- 
 ##start project
 - `npm run backend` - starts the express server
 - `npm run frontend` - starts vue development server
